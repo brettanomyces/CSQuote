@@ -97,12 +97,12 @@ public class CSProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case JOBS:
-                db.insertOrThrow(Tables.JOBS, null, values);
+                long id = db.insertOrThrow(Tables.JOBS, Jobs.CUSTOMER, values);
                 getContext().getContentResolver().notifyChange(uri, null, false);
-                return Jobs.buildJobUri(values.getAsString(Jobs._ID));
+                return Jobs.buildJobUri("" + id);
 
             case ROOMS:
-                db.insertOrThrow(Tables.ROOMS, null, values);
+                db.insertOrThrow(Tables.ROOMS, Rooms.DESCRIPTION, values);
                 getContext().getContentResolver().notifyChange(uri, null, false);
                 return Rooms.buildRoomUri(values.getAsString(Rooms._ID));
 
@@ -194,6 +194,19 @@ public class CSProvider extends ContentProvider {
     private SelectionBuilder buildExpandedSelection(Uri uri, int match) {
         final SelectionBuilder builder = new SelectionBuilder();
         switch (match) {
+            case JOBS : {
+                return builder.table(Tables.JOBS)
+                        .mapToTable(Jobs._ID, Tables.JOBS)
+                        .mapToTable(Jobs.CUSTOMER, Tables.JOBS);
+            }
+            case JOBS_ID: {
+                String jobId = Jobs.getJobId(uri);
+                return builder.table(Tables.JOBS)
+                        .mapToTable(Jobs._ID, Tables.JOBS)
+                        .mapToTable(Jobs.CUSTOMER, Tables.JOBS)
+                        .where(Jobs._ID + "=?", jobId);
+            }
+
             case ROOMS: {
                 return builder
                         .table(Tables.ROOMS)
