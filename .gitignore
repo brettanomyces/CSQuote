@@ -40,3 +40,6 @@ proguard/
 *.ipr
 *~
 *.swp
+
+# Apple
+.DS_Store
