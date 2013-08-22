@@ -9,9 +9,14 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import nz.co.curtainsolutions.R;
 import nz.co.curtainsolutions.provider.CSContract;
@@ -27,6 +32,11 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
     private String jobId;
     private SimpleCursorAdapter mAdapter;
 
+    // Views
+    private Button mAddRoomBtn;
+    private TextView mJobId;
+    private EditText mJobCustomer;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +48,11 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLayout = inflater.inflate(R.layout.job_detail, container, false);
-
+        mAddRoomBtn = (Button) mLayout.findViewById(R.id.add_room_btn);
+        mAddRoomBtn.setOnClickListener(this);
+        mJobId = (TextView) mLayout.findViewById(R.id.job_id);
+        mJobCustomer = (EditText) mLayout.findViewById(R.id.job_customer);
+        mJobCustomer.setOnFocusChangeListener(new OnFocusChangeListenerImpl(CSContract.Jobs.CUSTOMER));
 
         if (jobId != null) {
             getLoaderManager().initLoader(JOB_DETAIL_LOADER, null, this);
@@ -54,7 +68,12 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
         // Load the jobs rooms
         if (jobId != null) {
             FragmentManager fragmentManager = getChildFragmentManager();
+
+            Bundle bundle = new Bundle();
+            bundle.putString(JobDetailFragment.ARG_JOB_ID, jobId);
+
             Fragment fragment = new RoomListFragment();
+            fragment.setArguments(bundle);
             fragmentManager.beginTransaction()
                     .replace(R.id.room_frame, fragment)
                     .commit();
@@ -87,7 +106,11 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        System.out.println(data.getColumnCount());
+        System.out.println(data.getColumnNames().toString());
+        data.moveToFirst();
+        mJobId.setText("" + data.getInt(data.getColumnIndex(CSContract.Jobs._ID)));
+        mJobCustomer.setText(data.getString(data.getColumnIndex(CSContract.Jobs.CUSTOMER)));
     }
 
     @Override
@@ -107,8 +130,49 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     private void addRoom() {
+        System.out.println("add room!");
         ContentValues contentValues = new ContentValues();
         contentValues.put(CSContract.Rooms.JOB_ID, jobId);
-        getActivity().getContentResolver().insert(CSContract.Rooms.CONTENT_URI, contentValues);
+
+        getActivity().getContentResolver().insert(
+                CSContract.Rooms.CONTENT_URI,
+                contentValues
+        );
+    }
+
+    private class OnFocusChangeListenerImpl implements View.OnFocusChangeListener {
+        private String lastValue;
+        private String mColumn;
+
+        public OnFocusChangeListenerImpl(String column) {
+            mColumn = column;
+
+        }
+
+
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            String newValue = ((EditText)v).getText().toString();
+            if (!newValue.equals(lastValue)) {
+                // Update lastValue
+                lastValue = newValue;
+
+                // Persist
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(mColumn, newValue);
+
+                String selection = CSContract.Jobs._ID + "=?";
+                String[] selectionArgs = {jobId,};
+
+                getActivity().getContentResolver().update(
+                        CSContract.Jobs.CONTENT_URI,
+                        contentValues,
+                        selection,
+                        selectionArgs
+                );
+
+            }
+        }
     }
 }

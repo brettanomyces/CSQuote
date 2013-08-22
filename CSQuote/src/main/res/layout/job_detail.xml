@@ -11,28 +11,21 @@
             android:text="New Text"
             android:id="@+id/job_id"/>
 
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/job_description"/>
-
     <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/room_frame">
     </FrameLayout>
 
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/job_customer"/>
+
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Add Room"
             android:id="@+id/add_room_btn"/>
-
-    <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:id="@+id/save_btn"/>
 
 </LinearLayout>
