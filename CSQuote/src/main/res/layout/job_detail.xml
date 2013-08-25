@@ -8,24 +8,37 @@
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/job_id"/>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Job"
+            android:id="@+id/job_text"
+            android:gravity="center_horizontal"/>
 
-    <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/room_frame">
-    </FrameLayout>
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/scrollView">
 
-    <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/job_customer"/>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                >
 
-    <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Room"
-            android:id="@+id/add_room_btn"/>
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/customer_text"
+                    android:singleLine="true"
+                    android:layout_gravity="center"
+                    android:hint="Customer"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rooms"
+                    android:id="@+id/rooms_btn"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

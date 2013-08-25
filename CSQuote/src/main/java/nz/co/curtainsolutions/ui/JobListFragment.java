@@ -8,7 +8,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import nz.co.curtainsolutions.R;
@@ -48,6 +50,12 @@ public class JobListFragment extends ListFragment
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.job_list, container, false);
+        return view;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)){
@@ -80,15 +88,12 @@ public class JobListFragment extends ListFragment
         String jobId =  cursor.getString(cursor.getColumnIndex(CSContract.Jobs._ID));
 
         Bundle args = new Bundle();
-        args.putString(JobDetailFragment.ARG_JOB_ID, jobId);
+        args.putString(JobActivity.ARG_JOB_ID, jobId);
+
         JobDetailFragment jobDetailFragment = new JobDetailFragment();
         jobDetailFragment.setArguments(args);
 
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_frame, jobDetailFragment)
-                .addToBackStack(null)
-                .commit();
+        ((JobActivity) getActivity()).handleFragmentTransaction(jobDetailFragment);
     }
 
     @Override

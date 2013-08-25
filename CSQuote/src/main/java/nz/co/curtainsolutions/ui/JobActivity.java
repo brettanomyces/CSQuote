@@ -21,7 +21,12 @@ import android.widget.ListView;
 import nz.co.curtainsolutions.R;
 import nz.co.curtainsolutions.provider.CSContract;
 
-public class MainActivity extends Activity {
+public class JobActivity extends Activity {
+
+    public static final String ARG_JOB_ID = "arg_job_id";
+    public static final String ARG_ROOM_ID = "arg_room_id";
+    public static final String ARG_WINDOW_ID = "arg_window_id";
+
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -118,32 +123,25 @@ public class MainActivity extends Activity {
     }
 
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment;
-
         switch (position) {
             case 0:
                 fragment = new JobListFragment();
                 break;
             case 1:
-                String jobId = createNewJob();
-                Bundle bundle = new Bundle();
-                bundle.putString(JobDetailFragment.ARG_JOB_ID, jobId);
+                String jobId = newJob();
+                Bundle args = new Bundle();
+                args.putString(ARG_JOB_ID, jobId);
 
                 fragment = new JobDetailFragment();
-                fragment.setArguments(bundle);
+                fragment.setArguments(args);
                 break;
             default:
                 fragment = new JobListFragment();
                 break;
         }
 
-//        Bundle args = new Bundle();
-//        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-//        fragment.setArguments(args);
-
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        handleFragmentTransaction(fragment);
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
@@ -181,7 +179,7 @@ public class MainActivity extends Activity {
      *
      * @return the new jobs id as a string
      */
-    private String createNewJob() {
+    private String newJob() {
         ContentValues contentValues = new ContentValues();
         Uri uri = getContentResolver().insert(CSContract.Jobs.CONTENT_URI, contentValues);
         System.out.println(uri);
@@ -196,5 +194,12 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void handleFragmentTransaction(Fragment fragment){
+        FragmentManager fragmentManager = getFragmentManager();
 
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
 }

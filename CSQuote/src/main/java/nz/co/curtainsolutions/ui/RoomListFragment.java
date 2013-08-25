@@ -2,12 +2,15 @@ package nz.co.curtainsolutions.ui;
 
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,28 +20,33 @@ import nz.co.curtainsolutions.R;
 import nz.co.curtainsolutions.provider.CSContract;
 
 /**
- * Created by brettyukich on 21/08/13.
+ * Created by brettyukich on 22/08/13.
+ * NOT ACTUALLY A LIST,
  */
-public class RoomListFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public class RoomListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static final String TAG = RoomListFragment.class.getSimpleName();
     private static final int ROOM_LIST_LOADER = 0x03;
-    private static View mLayout;
-    private String jobId;
     private SimpleCursorAdapter mAdapter;
-    private int mActivatedPosition = ListView.INVALID_POSITION;
+    private String mJobId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String[] columns = {CSContract.Rooms._ID, CSContract.Rooms.DESCRIPTION};
-        int[] to = {R.id.room_id, R.id.room_description};
+        String[] columns = {
+                CSContract.Rooms._ID,
+                CSContract.Rooms.DESCRIPTION,
+        };
+
+        int[] to = {
+                R.id.room_text,
+                R.id.description_text,
+        };
 
         mAdapter = new SimpleCursorAdapter(
                 getActivity().getApplicationContext(),
-                R.layout.room_list,
+                R.layout.room_list_item,
                 null,
                 columns,
                 to,
@@ -46,56 +54,84 @@ public class RoomListFragment extends ListFragment
         );
 
         setListAdapter(mAdapter);
+
+        if (mJobId != null){
+            getLoaderManager().initLoader(ROOM_LIST_LOADER, null, this);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (getArguments() != null && getArguments().containsKey(JobDetailFragment.ARG_JOB_ID)){
-            // Extract the jobId from the argument bundle
-            jobId = getArguments().getString(JobDetailFragment.ARG_JOB_ID);
-            // Initialize the loader
+        View view = inflater.inflate(R.layout.room_list, container, false);
+
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(JobActivity.ARG_JOB_ID)) {
+            mJobId = args.getString(JobActivity.ARG_JOB_ID);
+            // Loader is initiated here because we need the args before we can initiate it
             getLoaderManager().initLoader(ROOM_LIST_LOADER, null, this);
+
         }
-        return super.onCreateView(inflater, container, savedInstanceState);
+
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
-    }
-
-    public void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-
-        mActivatedPosition = position;
+        view.findViewById(R.id.add_room_btn).setOnClickListener(this);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Cursor cursor = (Cursor) getListAdapter().getItem(position);
+        String roomId = cursor.getString(cursor.getColumnIndex(CSContract.Rooms._ID));
+
+        showRoomDetails(roomId);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.add_room_btn:
+                showRoomDetails(newRoom());
+                break;
+            default:
+                break;
         }
+
+    }
+
+    private void showRoomDetails(String roomId) {
+        Bundle args = new Bundle();
+        args.putString(JobActivity.ARG_JOB_ID, mJobId);
+        args.putString(JobActivity.ARG_ROOM_ID, roomId);
+
+        RoomDetailFragment roomDetailFragment = new RoomDetailFragment();
+        roomDetailFragment.setArguments(args);
+
+        ((JobActivity) getActivity()).handleFragmentTransaction(roomDetailFragment);
+    }
+
+    private String newRoom() {
+        // Create a new room in the database
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CSContract.Rooms.JOB_ID, mJobId);
+        Uri uri = getActivity().getContentResolver().insert(CSContract.Rooms.CONTENT_URI, contentValues);
+        getLoaderManager().restartLoader(ROOM_LIST_LOADER, null, this);
+        return CSContract.Rooms.getRoomId(uri);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
+        Log.d(TAG, "onCreateLoader called");
         String[] projection = {
                 CSContract.Rooms._ID,
                 CSContract.Rooms.DESCRIPTION,
         };
 
-        // only get the rooms belonging to this job
-        String selection = CSContract.Rooms._ID + "=?";
-        String[] selectionArgs = {jobId};
+        // Get only the rooms belonging to this job
+        String selection = CSContract.Rooms.JOB_ID + "=?";
+        String[] selectionArgs = {mJobId,};
 
         CursorLoader cursorLoader = new CursorLoader(
                 getActivity(),
@@ -111,11 +147,16 @@ public class RoomListFragment extends ListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d(TAG, "onLoadFinished called");
         mAdapter.swapCursor(data);
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset called");
         mAdapter.swapCursor(null);
     }
+
+
 }
