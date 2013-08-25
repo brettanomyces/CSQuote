@@ -21,9 +21,9 @@ import nz.co.curtainsolutions.provider.CSContract;
 
 /**
  * Created by brettyukich on 22/08/13.
- * NOT ACTUALLY A LIST,
  */
-public class RoomListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class RoomListFragment extends ListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     private static final String TAG = RoomListFragment.class.getSimpleName();
     private static final int ROOM_LIST_LOADER = 0x03;
@@ -54,10 +54,6 @@ public class RoomListFragment extends ListFragment implements LoaderManager.Load
         );
 
         setListAdapter(mAdapter);
-
-        if (mJobId != null){
-            getLoaderManager().initLoader(ROOM_LIST_LOADER, null, this);
-        }
     }
 
     @Override
@@ -116,8 +112,10 @@ public class RoomListFragment extends ListFragment implements LoaderManager.Load
         // Create a new room in the database
         ContentValues contentValues = new ContentValues();
         contentValues.put(CSContract.Rooms.JOB_ID, mJobId);
+
         Uri uri = getActivity().getContentResolver().insert(CSContract.Rooms.CONTENT_URI, contentValues);
         getLoaderManager().restartLoader(ROOM_LIST_LOADER, null, this);
+
         return CSContract.Rooms.getRoomId(uri);
     }
 

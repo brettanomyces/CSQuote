@@ -47,6 +47,7 @@ public class RoomDetailFragment extends Fragment implements LoaderManager.Loader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLayout = inflater.inflate(R.layout.room_detail, container, false);
+        mLayout.findViewById(R.id.windows_btn).setOnClickListener(this);
         mLayout.findViewById(R.id.remove_room_btn).setOnClickListener(this);
 
         if (mRoomId != null){
@@ -77,7 +78,24 @@ public class RoomDetailFragment extends Fragment implements LoaderManager.Loader
             case R.id.remove_room_btn:
                 Log.d(TAG, "removing room " + mRoomId);
                 removeRoom();
+                break;
+            case R.id.windows_btn:
+                showWindowList();
+                break;
+            default:
+                break;
         }
+    }
+
+    private void showWindowList() {
+        Bundle args = new Bundle();
+        args.putString(JobActivity.ARG_JOB_ID, mJobId);
+        args.putString(JobActivity.ARG_ROOM_ID, mRoomId);
+
+        Fragment fragment = new WindowListFragment();
+        fragment.setArguments(args);
+
+        ((JobActivity)getActivity()).handleFragmentTransaction(fragment);
     }
 
     private void removeRoom(){

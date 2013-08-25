@@ -119,9 +119,11 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     private void showRoomList() {
-        Fragment fragment = new RoomListFragment();
+
         Bundle args = new Bundle();
         args.putString(JobActivity.ARG_JOB_ID, mJobId);
+
+        Fragment fragment = new RoomListFragment();
         fragment.setArguments(args);
 
         ((JobActivity) getActivity()).handleFragmentTransaction(fragment);

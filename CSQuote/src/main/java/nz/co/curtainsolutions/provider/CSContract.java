@@ -28,6 +28,7 @@ public class CSContract {
     }
 
     interface WindowColumns {
+        public static final String JOB_ID = "job_id";
         public static final String ROOM_ID = "room_id";
         public static final String WIDTH = "width";
         public static final String HEIGHT = "height";

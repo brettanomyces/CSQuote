@@ -16,7 +16,7 @@ import nz.co.curtainsolutions.provider.CSContract.WindowColumns;
 public class CSDatabase extends SQLiteOpenHelper {
     private static final String TAG = CSDatabase.class.getSimpleName();
     private static final String DB_NAME = "curtainsolutions.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     public CSDatabase(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -37,6 +37,7 @@ public class CSDatabase extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + Tables.WINDOWS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + WindowColumns.JOB_ID + " INTERGER NOT NULL,"
                 + WindowColumns.ROOM_ID + " INTEGER NOT NULL,"
                 + WindowColumns.HEIGHT + " INTEGER,"
                 + WindowColumns.WIDTH + " INTEGER,"
