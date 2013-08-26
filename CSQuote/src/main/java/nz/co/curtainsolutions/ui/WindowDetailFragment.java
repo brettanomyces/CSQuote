@@ -52,6 +52,7 @@ public class WindowDetailFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLayout = inflater.inflate(R.layout.window_detail, container, false);
         mLayout.findViewById(R.id.remove_window_btn).setOnClickListener(this);
+        mLayout.findViewById(R.id.done_btn).setOnClickListener(this);
 
         if (mJobId != null){
             getLoaderManager().initLoader(WINDOW_DETAIL_LOADER, null, this);
@@ -66,8 +67,10 @@ public class WindowDetailFragment extends Fragment implements
 
         // Commit unsaved changes to the database
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CSContract.Windows.HEIGHT, ((EditText)mLayout.findViewById(R.id.height_text)).getText().toString());
-        contentValues.put(CSContract.Windows.WIDTH, ((EditText)mLayout.findViewById(R.id.width_text)).getText().toString());
+        contentValues.put(CSContract.Windows.GROSS_HEIGHT, ((EditText)mLayout.findViewById(R.id.gross_height_text)).getText().toString());
+        contentValues.put(CSContract.Windows.INNER_HEIGHT, ((EditText)mLayout.findViewById(R.id.inner_height_text)).getText().toString());
+        contentValues.put(CSContract.Windows.GROSS_WIDTH, ((EditText)mLayout.findViewById(R.id.gross_width_text)).getText().toString());
+        contentValues.put(CSContract.Windows.INNER_WIDTH, ((EditText)mLayout.findViewById(R.id.inner_width_text)).getText().toString());
 
         String selection = CSContract.Windows._ID + "=?";
         String[] selectionArgs = {mWindowId,};
@@ -86,6 +89,8 @@ public class WindowDetailFragment extends Fragment implements
             case R.id.remove_window_btn:
                 removeWindow();
                 break;
+            case R.id.done_btn:
+                getFragmentManager().popBackStack();
             default:
                 break;
 
@@ -99,8 +104,11 @@ public class WindowDetailFragment extends Fragment implements
                 CSContract.Windows._ID,
                 CSContract.Windows.JOB_ID,
                 CSContract.Windows.ROOM_ID,
-                CSContract.Windows.HEIGHT,
-                CSContract.Windows.WIDTH,
+                CSContract.Windows.GROSS_HEIGHT,
+                CSContract.Windows.INNER_HEIGHT,
+                CSContract.Windows.GROSS_WIDTH,
+                CSContract.Windows.INNER_WIDTH,
+                CSContract.Windows.TRACK_ID,
         };
 
         String selection = CSContract.Windows._ID + "=?";
@@ -122,11 +130,14 @@ public class WindowDetailFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Should only be one
         data.moveToFirst();
-        ((TextView)mLayout.findViewById(R.id.job_text)).setText("" + data.getInt(data.getColumnIndex(CSContract.Windows.JOB_ID)));
-        ((TextView)mLayout.findViewById(R.id.room_text)).setText("" + data.getInt(data.getColumnIndex(CSContract.Windows.ROOM_ID)));
-        ((TextView)mLayout.findViewById(R.id.window_text)).setText("" + data.getInt(data.getColumnIndex(CSContract.Windows._ID)));
-        ((EditText)mLayout.findViewById(R.id.height_text)).setText("" + data.getInt(data.getColumnIndex(CSContract.Windows.HEIGHT)));
-        ((EditText)mLayout.findViewById(R.id.width_text)).setText("" + data.getInt(data.getColumnIndex(CSContract.Windows.WIDTH)));
+        ((TextView)mLayout.findViewById(R.id.job_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.JOB_ID)));
+        ((TextView)mLayout.findViewById(R.id.room_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.ROOM_ID)));
+        ((TextView)mLayout.findViewById(R.id.window_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows._ID)));
+        ((EditText)mLayout.findViewById(R.id.gross_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_HEIGHT)));
+        ((EditText)mLayout.findViewById(R.id.inner_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_HEIGHT)));
+        ((EditText)mLayout.findViewById(R.id.gross_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_WIDTH)));
+        ((EditText)mLayout.findViewById(R.id.inner_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_WIDTH)));
+        ((EditText)mLayout.findViewById(R.id.track_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.TRACK_WIDTH)));
 
     }
 

@@ -30,8 +30,29 @@ public class CSContract {
     interface WindowColumns {
         public static final String JOB_ID = "job_id";
         public static final String ROOM_ID = "room_id";
-        public static final String WIDTH = "width";
-        public static final String HEIGHT = "height";
+        public static final String GROSS_WIDTH = "width";
+        public static final String INNER_WIDTH = "inner_width";
+        public static final String GROSS_HEIGHT = "height";
+        public static final String INNER_HEIGHT = "inner_height";
+        public static final String TRACK_WIDTH = "track_width";
+        public static final String TRACK_ID = "track_id";
+    }
+
+    interface TrackColumns {
+        public static final String MIN_WIDTH = "min_width";
+        public static final String MAX_WIDTH = "max_width";
+        public static final String PRICE = "price";
+        public static final String DESCRIPTION = "description";
+    }
+
+    interface NetColumns {
+        public static final String PRICE = "price";
+        public static final String DESCRIPTION = "description";
+    }
+
+    interface CurtainColumns {
+        public static final String PRICE = "price";
+        public static final String DESCRIPTION = "description";
     }
 
     public static class Jobs implements BaseColumns, JobColumns {

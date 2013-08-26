@@ -227,16 +227,16 @@ public class CSProvider extends ContentProvider {
                         .table(Tables.WINDOWS)
                         .mapToTable(Windows.JOB_ID, Tables.WINDOWS)
                         .mapToTable(Windows.ROOM_ID, Tables.WINDOWS)
-                        .mapToTable(Windows.HEIGHT, Tables.WINDOWS)
-                        .mapToTable(Windows.WIDTH, Tables.WINDOWS);
+                        .mapToTable(Windows.GROSS_HEIGHT, Tables.WINDOWS)
+                        .mapToTable(Windows.GROSS_WIDTH, Tables.WINDOWS);
             }
             case WINDOWS_ID: {
                 final String windowId = Windows.getWindowId(uri);
                 return builder
                         .table(Tables.WINDOWS)
                         .mapToTable(Windows.ROOM_ID, Tables.WINDOWS)
-                        .mapToTable(Windows.HEIGHT, Tables.WINDOWS)
-                        .mapToTable(Windows.WIDTH, Tables.WINDOWS)
+                        .mapToTable(Windows.GROSS_HEIGHT, Tables.WINDOWS)
+                        .mapToTable(Windows.GROSS_WIDTH, Tables.WINDOWS)
                         .where(Windows._ID + "=?", windowId);
             }
             default: {

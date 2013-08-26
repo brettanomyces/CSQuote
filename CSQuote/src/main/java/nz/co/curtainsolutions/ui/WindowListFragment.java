@@ -129,8 +129,8 @@ public class WindowListFragment extends ListFragment
                 CSContract.Windows._ID,
                 CSContract.Windows.JOB_ID,
                 CSContract.Windows.ROOM_ID,
-                CSContract.Windows.HEIGHT,
-                CSContract.Windows.WIDTH,
+                CSContract.Windows.GROSS_HEIGHT,
+                CSContract.Windows.GROSS_WIDTH,
         };
 
         String selection =
