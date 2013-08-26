@@ -13,6 +13,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import nz.co.curtainsolutions.R;
 import nz.co.curtainsolutions.provider.CSContract;
@@ -87,6 +88,14 @@ public class WindowListFragment extends ListFragment
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Cursor cursor = (Cursor) getListAdapter().getItem(position);
+        String windowId = "" + cursor.getInt(cursor.getColumnIndex(CSContract.Windows._ID));
+
+        showWindowDetails(windowId);
     }
 
     private void showWindowDetails(String windowId){

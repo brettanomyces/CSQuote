@@ -2,6 +2,7 @@ package nz.co.curtainsolutions.ui;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -59,11 +60,31 @@ public class RoomDetailFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        String[] projection = {
+                CSContract.Rooms._ID,
+                CSContract.Rooms.JOB_ID,
+                CSContract.Rooms.DESCRIPTION
+        };
+
+        String selection = CSContract.Rooms._ID + "=?";
+        String[] selectionArgs = {mRoomId,};
+
+        CursorLoader cursorLoader = new CursorLoader(
+                getActivity(),
+                CSContract.Rooms.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null
+        );
+
+        return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToFirst();
+
 
     }
 

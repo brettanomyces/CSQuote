@@ -95,21 +95,22 @@ public class CSProvider extends ContentProvider {
         Log.i(TAG, "insert(uri=" + uri + ", values=" + values.toString() + ")");
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
+        long id;
         switch (match) {
             case JOBS:
-                long id = db.insertOrThrow(Tables.JOBS, Jobs.CUSTOMER, values);
+                id = db.insertOrThrow(Tables.JOBS, Jobs.CUSTOMER, values);
                 getContext().getContentResolver().notifyChange(uri, null, false);
                 return Jobs.buildJobUri("" + id);
 
             case ROOMS:
-                db.insertOrThrow(Tables.ROOMS, Rooms.DESCRIPTION, values);
+                id = db.insertOrThrow(Tables.ROOMS, Rooms.DESCRIPTION, values);
                 getContext().getContentResolver().notifyChange(uri, null, false);
-                return Rooms.buildRoomUri(values.getAsString(Rooms._ID));
+                return Rooms.buildRoomUri("" + id);
 
             case WINDOWS:
-                db.insertOrThrow(Tables.WINDOWS, null, values);
+                id = db.insertOrThrow(Tables.WINDOWS, null, values);
                 getContext().getContentResolver().notifyChange(uri, null, false);
-                return Windows.buildWindowUri(values.getAsString(Windows._ID));
+                return Windows.buildWindowUri("" + id);
 
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

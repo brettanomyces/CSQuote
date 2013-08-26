@@ -24,13 +24,13 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
     private static final int JOB_DETAIL_LOADER = 0x02;
     private View mLayout;
     private String mJobId;
-    // Views
     private TextView mJobText;
     private EditText mCustomerText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Bundle args = getArguments();
         if (args != null && args.containsKey(JobActivity.ARG_JOB_ID)) {
             mJobId = args.getString(JobActivity.ARG_JOB_ID);
@@ -72,6 +72,17 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.rooms_btn:
+                showRoomList();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 CSContract.Jobs._ID,
@@ -107,16 +118,7 @@ public class JobDetailFragment extends Fragment implements LoaderManager.LoaderC
         // Do nothing
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.rooms_btn:
-                showRoomList();
-                break;
-            default:
-                break;
-        }
-    }
+
 
     private void showRoomList() {
 
