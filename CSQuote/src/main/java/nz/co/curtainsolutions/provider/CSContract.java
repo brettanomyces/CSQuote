@@ -13,6 +13,7 @@ public class CSContract {
     private static final String PATH_JOBS = "jobs";
     private static final String PATH_ROOMS = "rooms";
     private static final String PATH_WINDOWS = "windows";
+    private static final String PATH_TRACKS = "tracks";
 
     private CSContract() {
         // private constructor
@@ -102,6 +103,23 @@ public class CSContract {
         }
 
         public static String getWindowId(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+    }
+
+    public static class Tracks implements BaseColumns, TrackColumns {
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRACKS).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.curtainsolutions.track";
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.curtainsolutions.track";
+
+        public static Uri buildTrackUri(String trackId) {
+            return CONTENT_URI.buildUpon().appendPath(trackId).build();
+        }
+
+        public static String getTrackId(Uri uri) {
             return uri.getPathSegments().get(1);
         }
     }

@@ -6,13 +6,14 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.text.method.HideReturnsTransformationMethod;
 import android.util.Log;
 
 import java.util.Arrays;
 
 import nz.co.curtainsolutions.provider.CSContract.Jobs;
 import nz.co.curtainsolutions.provider.CSContract.Rooms;
-import nz.co.curtainsolutions.provider.CSContract.Windows;
+import nz.co.curtainsolutions.provider.CSContract.*;
 import nz.co.curtainsolutions.provider.CSDatabase.Tables;
 import nz.co.curtainsolutions.util.SelectionBuilder;
 
@@ -28,6 +29,8 @@ public class CSProvider extends ContentProvider {
     private static final int ROOMS_ID = 201;
     private static final int WINDOWS = 300;
     private static final int WINDOWS_ID = 301;
+    private static final int TRACKS = 400;
+    private static final int TRACKS_ID = 401;
     private CSDatabase mOpenHelper;
 
     private static UriMatcher buildUriMatcher() {
@@ -42,6 +45,9 @@ public class CSProvider extends ContentProvider {
 
         matcher.addURI(authority, "windows", WINDOWS);
         matcher.addURI(authority, "windows/*", WINDOWS_ID);
+
+        matcher.addURI(authority, "tracks", TRACKS);
+        matcher.addURI(authority, "tracks/*", TRACKS_ID);
 
         return matcher;
     }
@@ -60,6 +66,7 @@ public class CSProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             default: {
+                // TODO figure out when to use expanded selection and when to use simple
                 final SelectionBuilder builder = buildExpandedSelection(uri, match);
                 Cursor cursor = builder.where(selection, selectionArgs).query(db, projection, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -147,6 +154,7 @@ public class CSProvider extends ContentProvider {
      * {@link #update}, and {@link #delete} operations.
      */
     private SelectionBuilder buildSimpleSelection(Uri uri) {
+        Log.d(TAG, "Building simple selection for uri: " + uri);
         final SelectionBuilder builder = new SelectionBuilder();
         final int match = sUriMatcher.match(uri);
         switch (match) {
@@ -181,6 +189,10 @@ public class CSProvider extends ContentProvider {
                         .where(Windows._ID + "=?", windowId);
             }
 
+            case TRACKS: {
+                return builder.table(Tables.TRACKS);
+            }
+
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
@@ -193,6 +205,7 @@ public class CSProvider extends ContentProvider {
      * performs table joins useful for {@link Cursor} data.
      */
     private SelectionBuilder buildExpandedSelection(Uri uri, int match) {
+        Log.d(TAG, "Building expanded selection for uri: " + uri);
         final SelectionBuilder builder = new SelectionBuilder();
         switch (match) {
             case JOBS : {
@@ -211,6 +224,7 @@ public class CSProvider extends ContentProvider {
             case ROOMS: {
                 return builder
                         .table(Tables.ROOMS)
+                        .mapToTable(Rooms._ID, Tables.ROOMS)
                         .mapToTable(Rooms.JOB_ID, Tables.ROOMS)
                         .mapToTable(Rooms.DESCRIPTION, Tables.ROOMS);
             }
@@ -218,6 +232,7 @@ public class CSProvider extends ContentProvider {
                 final String roomId = Rooms.getRoomId(uri);
                 return builder
                         .table(Tables.ROOMS)
+                        .mapToTable(Rooms._ID, Tables.ROOMS)
                         .mapToTable(Rooms.JOB_ID, Tables.ROOMS)
                         .mapToTable(Rooms.DESCRIPTION, Tables.ROOMS)
                         .where(Rooms._ID + "=?", roomId);
@@ -225,6 +240,7 @@ public class CSProvider extends ContentProvider {
             case WINDOWS: {
                 return builder
                         .table(Tables.WINDOWS)
+                        .mapToTable(Windows._ID, Tables.WINDOWS)
                         .mapToTable(Windows.JOB_ID, Tables.WINDOWS)
                         .mapToTable(Windows.ROOM_ID, Tables.WINDOWS)
                         .mapToTable(Windows.GROSS_HEIGHT, Tables.WINDOWS)
@@ -234,10 +250,21 @@ public class CSProvider extends ContentProvider {
                 final String windowId = Windows.getWindowId(uri);
                 return builder
                         .table(Tables.WINDOWS)
+                        .mapToTable(Windows._ID, Tables.WINDOWS)
                         .mapToTable(Windows.ROOM_ID, Tables.WINDOWS)
                         .mapToTable(Windows.GROSS_HEIGHT, Tables.WINDOWS)
                         .mapToTable(Windows.GROSS_WIDTH, Tables.WINDOWS)
                         .where(Windows._ID + "=?", windowId);
+            }
+
+            case TRACKS: {
+                return builder
+                        .table(Tables.TRACKS)
+                        .mapToTable(Tracks._ID, Tables.TRACKS)
+                        .mapToTable(Tracks.DESCRIPTION, Tables.TRACKS)
+                        .mapToTable(Tracks.MAX_WIDTH, Tables.TRACKS)
+                        .mapToTable(Tracks.MIN_WIDTH, Tables.TRACKS)
+                        .mapToTable(Tracks.PRICE, Tables.TRACKS);
             }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

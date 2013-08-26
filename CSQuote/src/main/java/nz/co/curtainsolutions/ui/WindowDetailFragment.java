@@ -11,7 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import nz.co.curtainsolutions.R;
@@ -53,6 +57,7 @@ public class WindowDetailFragment extends Fragment implements
         mLayout = inflater.inflate(R.layout.window_detail, container, false);
         mLayout.findViewById(R.id.remove_window_btn).setOnClickListener(this);
         mLayout.findViewById(R.id.done_btn).setOnClickListener(this);
+        ((Spinner)mLayout.findViewById(R.id.track_size_spinner)).setAdapter(getTrackSpinnerAdapter());
 
         if (mJobId != null){
             getLoaderManager().initLoader(WINDOW_DETAIL_LOADER, null, this);
@@ -108,6 +113,7 @@ public class WindowDetailFragment extends Fragment implements
                 CSContract.Windows.INNER_HEIGHT,
                 CSContract.Windows.GROSS_WIDTH,
                 CSContract.Windows.INNER_WIDTH,
+                CSContract.Windows.TRACK_WIDTH,
                 CSContract.Windows.TRACK_ID,
         };
 
@@ -157,6 +163,32 @@ public class WindowDetailFragment extends Fragment implements
         );
 
         getFragmentManager().popBackStack();
+    }
+
+    private SimpleCursorAdapter getTrackSpinnerAdapter(){
+        String[] projection = {CSContract.Tracks._ID, CSContract.Tracks.DESCRIPTION};
+        Cursor cursor = getActivity().getContentResolver().query(
+                CSContract.Tracks.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null
+        );
+
+        String[] from = {CSContract.Tracks.DESCRIPTION,};
+        int[] to = {R.id.track_description_text};
+
+        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
+                getActivity(),
+                R.layout.track_spinner_item,
+                cursor,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+
+        );
+
+        return simpleCursorAdapter;
     }
 
 
