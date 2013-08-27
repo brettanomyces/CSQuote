@@ -14,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import nz.co.curtainsolutions.R;
 import nz.co.curtainsolutions.provider.CSContract;
@@ -30,10 +33,26 @@ public class WindowDetailFragment extends Fragment implements
 
     private static final String TAG = WindowDetailFragment.class.getSimpleName();
     private static final int WINDOW_DETAIL_LOADER = 0x05;
+
+    // Map the cursor columns to the view, used for populating the fields and saving changes.
+    private static final Map<String, Integer> viewMap;
+    static {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        map.put(CSContract.Windows.JOB_ID, R.id.job_text);
+        map.put(CSContract.Windows.ROOM_ID, R.id.room_text);
+        map.put(CSContract.Windows._ID, R.id.window_text);
+        map.put(CSContract.Windows.GROSS_HEIGHT, R.id.gross_height_text);
+        map.put(CSContract.Windows.INNER_HEIGHT, R.id.inner_height_text);
+        map.put(CSContract.Windows.GROSS_WIDTH, R.id.gross_width_text);
+        map.put(CSContract.Windows.INNER_WIDTH, R.id.inner_width_text);
+        map.put(CSContract.Windows.TRACK_WIDTH, R.id.track_width_text);
+        viewMap = Collections.unmodifiableMap(map);
+
+    }
+
     private String mJobId;
     private String mRoomId;
     private String mWindowId;
-    // Views
     private View mLayout;
 
     @Override
@@ -70,12 +89,13 @@ public class WindowDetailFragment extends Fragment implements
     public void onPause() {
         super.onPause();
 
-        // Commit unsaved changes to the database
+        // Commit current state to database
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CSContract.Windows.GROSS_HEIGHT, ((EditText) mLayout.findViewById(R.id.gross_height_text)).getText().toString());
-        contentValues.put(CSContract.Windows.INNER_HEIGHT, ((EditText) mLayout.findViewById(R.id.inner_height_text)).getText().toString());
-        contentValues.put(CSContract.Windows.GROSS_WIDTH, ((EditText) mLayout.findViewById(R.id.gross_width_text)).getText().toString());
-        contentValues.put(CSContract.Windows.INNER_WIDTH, ((EditText) mLayout.findViewById(R.id.inner_width_text)).getText().toString());
+        for (String column : viewMap.keySet()) {
+            String value = ((TextView) mLayout.findViewById(viewMap.get(column))).getText().toString();
+            Log.d(TAG, "Putting into column '" + column + "', value '" + value + "'");
+            contentValues.put(column, value);
+        }
 
         String selection = CSContract.Windows._ID + "=?";
         String[] selectionArgs = {mWindowId,};
@@ -136,15 +156,21 @@ public class WindowDetailFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Should only be one
         data.moveToFirst();
-        ((TextView) mLayout.findViewById(R.id.job_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.JOB_ID)));
-        ((TextView) mLayout.findViewById(R.id.room_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.ROOM_ID)));
-        ((TextView) mLayout.findViewById(R.id.window_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows._ID)));
-        ((EditText) mLayout.findViewById(R.id.gross_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_HEIGHT)));
-        ((EditText) mLayout.findViewById(R.id.inner_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_HEIGHT)));
-        ((EditText) mLayout.findViewById(R.id.gross_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_WIDTH)));
-        ((EditText) mLayout.findViewById(R.id.inner_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_WIDTH)));
-        ((EditText) mLayout.findViewById(R.id.track_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.TRACK_WIDTH)));
 
+        // Extract the data from each of the columns
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            // TODO handle different data types rather than coercing to string
+            switch (data.getType(i)) {
+                case Cursor.FIELD_TYPE_NULL:
+                    // Skip null values
+                    break;
+                default: {
+                    TextView view = (TextView) mLayout.findViewById(viewMap.get(data.getColumnName(i)));
+                    view.setText(data.getString(i));
+                }
+
+            }
+        }
     }
 
     @Override
