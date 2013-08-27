@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.SimpleCursorAdapter;
@@ -376,6 +377,7 @@ public class WindowDetailFragment extends Fragment implements
                 cursor.moveToPosition(i);
                 if (value.contentEquals(cursor.getString(cursor.getColumnIndex(CSContract.Curtains._ID)))) {
                     spinner.setSelection(i);
+                    spinner.setOnItemSelectedListener(new SpinnerChangeListener(i));
                     break;
                 }
             }
@@ -384,6 +386,45 @@ public class WindowDetailFragment extends Fragment implements
             spinner.setSelection(pos);
         } else {
             throw new IllegalArgumentException("Spinner cannot have adapter of type: " + spinner.getAdapter().getClass());
+        }
+    }
+
+    private class SpinnerChangeListener implements AdapterView.OnItemSelectedListener {
+        private int mOldPosition;
+
+        public SpinnerChangeListener(int position) {
+            mOldPosition = position;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if(position != mOldPosition){
+                if (((Spinner) parent).getAdapter() instanceof SimpleCursorAdapter) {
+                    Cursor cursor = (Cursor) ((Spinner) parent).getSelectedItem();
+                    switch (parent.getId()) {
+                        case R.id.curtain_size_spinner: {
+                            String price = cursor.getString(cursor.getColumnIndex(CSContract.Curtains.PRICE));
+                            ((TextView) mLayout.findViewById(R.id.curtian_price_text)).setText(price);
+                            break;
+                        }
+                        case R.id.net_type_spinner: {
+                            String price = cursor.getString(cursor.getColumnIndex(CSContract.Nets.PRICE));
+                            ((TextView) mLayout.findViewById(R.id.net_price_text)).setText(price);
+                            break;
+                        }
+                        case R.id.track_size_spinner: {
+                            String price = cursor.getString(cursor.getColumnIndex(CSContract.Tracks.PRICE));
+                            ((TextView) mLayout.findViewById(R.id.track_price_text)).setText(price);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     }
 }

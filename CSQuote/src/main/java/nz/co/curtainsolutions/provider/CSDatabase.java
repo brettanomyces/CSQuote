@@ -53,6 +53,7 @@ public class CSDatabase extends SQLiteOpenHelper {
                 + WindowColumns.CURTAIN_ID + " INTEGER,"
                 + WindowColumns.CURTAIN_SEW + " DECIMAL,"
                 + WindowColumns.CURTAIN_PRICE + " DECIMAL,"
+                + WindowColumns.DESCRIPTION + " TEXT,"
                 + WindowColumns.GROSS_HEIGHT + " DECIMAL,"
                 + WindowColumns.GROSS_WIDTH + " DECIMAL,"
                 + WindowColumns.HOOK_SIZE + " TEXT,"

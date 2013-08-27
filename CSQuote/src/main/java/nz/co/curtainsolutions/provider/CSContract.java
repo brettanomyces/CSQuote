@@ -44,6 +44,7 @@ public class CSContract {
         public static final String CURTAIN_ID = "curtain_id";
         public static final String CURTAIN_PRICE = "curtain_price";
         public static final String CURTAIN_SEW = "curtain_sew";
+        public static final String DESCRIPTION = "description";
         public static final String GROSS_HEIGHT = "height";
         public static final String GROSS_WIDTH = "width";
         public static final String HOOK_SIZE = "hook_size";
