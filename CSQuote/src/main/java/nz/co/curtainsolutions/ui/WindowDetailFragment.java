@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class WindowDetailFragment extends Fragment implements
     static {
         Map<String, Integer> map = new HashMap<String, Integer>();
         map.put(CSContract.Windows.BLIND_PRICE, R.id.blind_price_text);
+        map.put(CSContract.Windows.CURTAIN_ID, R.id.curtain_size_spinner);
         map.put(CSContract.Windows.CURTAIN_SEW, R.id.curtain_sew_text);
         map.put(CSContract.Windows.CURTAIN_PRICE, R.id.curtian_price_text);
         map.put(CSContract.Windows.GROSS_HEIGHT, R.id.gross_height_text);
@@ -101,13 +103,18 @@ public class WindowDetailFragment extends Fragment implements
         super.onPause();
 
         // Get the current values from every field.
-        // TODO check for changes
         ContentValues contentValues = new ContentValues();
-        for (String column : viewMap.keySet()) {
-            String value = ((TextView) mLayout.findViewById(viewMap.get(column))).getText().toString();
-            Log.d(TAG, "Putting into column '" + column + "', value '" + value + "'");
-            contentValues.put(column, value);
+
+        for (String columnName : viewMap.keySet()) {
+            View view = mLayout.findViewById(viewMap.get(columnName));
+
+            if (view instanceof Spinner){
+                contentValues.put(columnName, getSpinnerSelectionId((Spinner) view));
+            } else if (view instanceof TextView){
+                contentValues.put(columnName, ((TextView)view).getText().toString());
+            }
         }
+
 
         String selection = CSContract.Windows._ID + "=?";
         String[] selectionArgs = {mWindowId,};
@@ -180,20 +187,19 @@ public class WindowDetailFragment extends Fragment implements
         // Should only be one
         data.moveToFirst();
 
-        // Extract the data from each of the columns
-        for (int i = 0; i < data.getColumnCount(); i++) {
-            // TODO handle different data types rather than coercing to string
-            switch (data.getType(i)) {
-                case Cursor.FIELD_TYPE_NULL:
-                    // Skip null values
-                    break;
-                default: {
-                    // Default is used for Text/Edit Views
-                    Log.d(TAG, "Loading data from column '" + data.getColumnName(i) + "'");
-                    TextView view = (TextView) mLayout.findViewById(viewMap.get(data.getColumnName(i)));
-                    view.setText(data.getString(i));
-                }
+        for (String columnName : viewMap.keySet()){
+            View view = mLayout.findViewById(viewMap.get(columnName));
+            int index = data.getColumnIndex(columnName);
+            if (data.getType(index) == Cursor.FIELD_TYPE_NULL){
+                // value has not yet been set
+                continue;
+            }
+            String value = data.getString(index);
 
+            if (view instanceof Spinner){
+                setSpinnerSelection((Spinner)view, value);
+            } else if (view instanceof TextView){
+                ((TextView)view).setText(value);
             }
         }
     }
@@ -344,6 +350,24 @@ public class WindowDetailFragment extends Fragment implements
         );
 
         return simpleCursorAdapter;
+    }
+
+
+    private String getSpinnerSelectionId(Spinner spinner) {
+        Cursor cursor = (Cursor) spinner.getSelectedItem();
+        return cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
+    }
+
+    private void setSpinnerSelection(Spinner spinner, String id){
+        SimpleCursorAdapter adapter = ((SimpleCursorAdapter)spinner.getAdapter());
+        Cursor cursor = adapter.getCursor();
+        for (int i = 0; i < cursor.getCount(); i++){
+            cursor.moveToPosition(i);
+            if (id.contentEquals(cursor.getString(cursor.getColumnIndex(CSContract.Curtains._ID)))){
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
 
