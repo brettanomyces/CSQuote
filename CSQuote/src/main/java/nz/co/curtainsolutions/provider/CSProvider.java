@@ -6,7 +6,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.text.method.HideReturnsTransformationMethod;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -32,7 +31,9 @@ public class CSProvider extends ContentProvider {
     private static final int TRACKS = 400;
     private static final int TRACKS_ID = 401;
     private static final int CURTAINS = 500;
-    private static final int CURTAIN_ID = 501;
+    private static final int CURTAINS_ID = 501;
+    private static final int NETS = 600;
+    private static final int NETS_ID = 601;
     private CSDatabase mOpenHelper;
 
     private static UriMatcher buildUriMatcher() {
@@ -52,7 +53,10 @@ public class CSProvider extends ContentProvider {
         matcher.addURI(authority, "tracks/*", TRACKS_ID);
 
         matcher.addURI(authority, "curtains", CURTAINS);
-        matcher.addURI(authority, "curtains/*", CURTAIN_ID);
+        matcher.addURI(authority, "curtains/*", CURTAINS_ID);
+
+        matcher.addURI(authority, "nets", NETS);
+        matcher.addURI(authority, "nets/*", NETS_ID);
 
         return matcher;
     }
@@ -103,9 +107,12 @@ public class CSProvider extends ContentProvider {
                 return Tracks.CONTENT_ITEM_TYPE;
             case CURTAINS:
                 return Curtains.CONTENT_TYPE;
-            case CURTAIN_ID:
+            case CURTAINS_ID:
                 return Curtains.CONTENT_ITEM_TYPE;
-
+            case NETS:
+                return Nets.CONTENT_TYPE;
+            case NETS_ID:
+                return Nets.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
@@ -211,6 +218,10 @@ public class CSProvider extends ContentProvider {
                 return builder.table(Tables.CURTAINS);
             }
 
+            case NETS: {
+                return builder.table(Tables.NETS);
+            }
+
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
@@ -277,6 +288,10 @@ public class CSProvider extends ContentProvider {
 
             case CURTAINS: {
                 return builder.table(Tables.CURTAINS);
+            }
+
+            case NETS: {
+                return builder.table(Tables.NETS);
             }
 
             default: {

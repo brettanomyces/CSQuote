@@ -85,6 +85,7 @@ public class WindowDetailFragment extends Fragment implements
         mLayout.findViewById(R.id.done_btn).setOnClickListener(this);
         ((Spinner) mLayout.findViewById(R.id.track_size_spinner)).setAdapter(getTrackSpinnerAdapter());
         ((Spinner) mLayout.findViewById(R.id.curtain_size_spinner)).setAdapter(getCurtainSpinnerAdapter());
+        ((Spinner) mLayout.findViewById(R.id.net_type_spinner)).setAdapter(getNetSpinnerAdapter());
         ((Spinner) mLayout.findViewById(R.id.unit_pair_spinner)).setAdapter(getUnitPairSpinnerAdapter());
         ((Spinner) mLayout.findViewById(R.id.hook_size_spinner)).setAdapter(getHookSizeSpinnerAdapter());
 
@@ -315,6 +316,35 @@ public class WindowDetailFragment extends Fragment implements
         return simpleCursorAdapter;
     }
 
+    private SpinnerAdapter getNetSpinnerAdapter() {
+        String[] projection = {
+                CSContract.Nets._ID,
+                CSContract.Nets.DESCRIPTION,
+                CSContract.Nets.PRICE,
+        };
+        Cursor cursor = getActivity().getContentResolver().query(
+                CSContract.Nets.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null
+        );
+
+        String[] from = {CSContract.Nets.DESCRIPTION,};
+        int[] to = {R.id.net_description_text};
+
+        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
+                getActivity(),
+                R.layout.net_spinner_item,
+                cursor,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+
+        );
+
+        return simpleCursorAdapter;
+    }
 
 
 }

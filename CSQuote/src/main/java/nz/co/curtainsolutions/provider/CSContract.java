@@ -15,6 +15,7 @@ public class CSContract {
     private static final String PATH_WINDOWS = "windows";
     private static final String PATH_TRACKS = "tracks";
     private static final String PATH_CURTAINS = "curtains";
+    private static final String PATH_NETS = "nets";
 
     private CSContract() {
         // private constructor
@@ -162,6 +163,23 @@ public class CSContract {
         }
 
         public static String getCurtainId(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+    }
+
+    public static class Nets implements BaseColumns, NetColumns {
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_NETS).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.curtainsolutions.net";
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.curtainsolutions.net";
+
+        public static Uri buildNetUri(String netId) {
+            return CONTENT_URI.buildUpon().appendPath(netId).build();
+        }
+
+        public static String getNetId(Uri uri) {
             return uri.getPathSegments().get(1);
         }
     }
