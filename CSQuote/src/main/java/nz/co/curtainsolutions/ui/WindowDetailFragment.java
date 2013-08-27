@@ -1,9 +1,11 @@
 package nz.co.curtainsolutions.ui;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,14 +26,13 @@ import nz.co.curtainsolutions.provider.CSContract;
  * Created by brettyukich on 24/08/13.
  */
 public class WindowDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener{
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     private static final String TAG = WindowDetailFragment.class.getSimpleName();
     private static final int WINDOW_DETAIL_LOADER = 0x05;
     private String mJobId;
     private String mRoomId;
     private String mWindowId;
-
     // Views
     private View mLayout;
 
@@ -44,7 +44,7 @@ public class WindowDetailFragment extends Fragment implements
         if (args != null
                 && args.containsKey(JobActivity.ARG_JOB_ID)
                 && args.containsKey(JobActivity.ARG_ROOM_ID)
-                && args.containsKey(JobActivity.ARG_WINDOW_ID)){
+                && args.containsKey(JobActivity.ARG_WINDOW_ID)) {
             mJobId = args.getString(JobActivity.ARG_JOB_ID);
             mRoomId = args.getString(JobActivity.ARG_ROOM_ID);
             mWindowId = args.getString(JobActivity.ARG_WINDOW_ID);
@@ -57,9 +57,9 @@ public class WindowDetailFragment extends Fragment implements
         mLayout = inflater.inflate(R.layout.window_detail, container, false);
         mLayout.findViewById(R.id.remove_window_btn).setOnClickListener(this);
         mLayout.findViewById(R.id.done_btn).setOnClickListener(this);
-        ((Spinner)mLayout.findViewById(R.id.track_size_spinner)).setAdapter(getTrackSpinnerAdapter());
+        ((Spinner) mLayout.findViewById(R.id.track_size_spinner)).setAdapter(getTrackSpinnerAdapter());
 
-        if (mJobId != null){
+        if (mJobId != null) {
             getLoaderManager().initLoader(WINDOW_DETAIL_LOADER, null, this);
         }
 
@@ -72,10 +72,10 @@ public class WindowDetailFragment extends Fragment implements
 
         // Commit unsaved changes to the database
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CSContract.Windows.GROSS_HEIGHT, ((EditText)mLayout.findViewById(R.id.gross_height_text)).getText().toString());
-        contentValues.put(CSContract.Windows.INNER_HEIGHT, ((EditText)mLayout.findViewById(R.id.inner_height_text)).getText().toString());
-        contentValues.put(CSContract.Windows.GROSS_WIDTH, ((EditText)mLayout.findViewById(R.id.gross_width_text)).getText().toString());
-        contentValues.put(CSContract.Windows.INNER_WIDTH, ((EditText)mLayout.findViewById(R.id.inner_width_text)).getText().toString());
+        contentValues.put(CSContract.Windows.GROSS_HEIGHT, ((EditText) mLayout.findViewById(R.id.gross_height_text)).getText().toString());
+        contentValues.put(CSContract.Windows.INNER_HEIGHT, ((EditText) mLayout.findViewById(R.id.inner_height_text)).getText().toString());
+        contentValues.put(CSContract.Windows.GROSS_WIDTH, ((EditText) mLayout.findViewById(R.id.gross_width_text)).getText().toString());
+        contentValues.put(CSContract.Windows.INNER_WIDTH, ((EditText) mLayout.findViewById(R.id.inner_width_text)).getText().toString());
 
         String selection = CSContract.Windows._ID + "=?";
         String[] selectionArgs = {mWindowId,};
@@ -90,9 +90,9 @@ public class WindowDetailFragment extends Fragment implements
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.remove_window_btn:
-                removeWindow();
+                alertRemoveWindow();
                 break;
             case R.id.done_btn:
                 getFragmentManager().popBackStack();
@@ -136,14 +136,14 @@ public class WindowDetailFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Should only be one
         data.moveToFirst();
-        ((TextView)mLayout.findViewById(R.id.job_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.JOB_ID)));
-        ((TextView)mLayout.findViewById(R.id.room_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.ROOM_ID)));
-        ((TextView)mLayout.findViewById(R.id.window_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows._ID)));
-        ((EditText)mLayout.findViewById(R.id.gross_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_HEIGHT)));
-        ((EditText)mLayout.findViewById(R.id.inner_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_HEIGHT)));
-        ((EditText)mLayout.findViewById(R.id.gross_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_WIDTH)));
-        ((EditText)mLayout.findViewById(R.id.inner_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_WIDTH)));
-        ((EditText)mLayout.findViewById(R.id.track_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.TRACK_WIDTH)));
+        ((TextView) mLayout.findViewById(R.id.job_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.JOB_ID)));
+        ((TextView) mLayout.findViewById(R.id.room_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.ROOM_ID)));
+        ((TextView) mLayout.findViewById(R.id.window_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows._ID)));
+        ((EditText) mLayout.findViewById(R.id.gross_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_HEIGHT)));
+        ((EditText) mLayout.findViewById(R.id.inner_height_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_HEIGHT)));
+        ((EditText) mLayout.findViewById(R.id.gross_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.GROSS_WIDTH)));
+        ((EditText) mLayout.findViewById(R.id.inner_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.INNER_WIDTH)));
+        ((EditText) mLayout.findViewById(R.id.track_width_text)).setText(data.getString(data.getColumnIndex(CSContract.Windows.TRACK_WIDTH)));
 
     }
 
@@ -152,7 +152,26 @@ public class WindowDetailFragment extends Fragment implements
         // Do nothing
     }
 
-    private void removeWindow(){
+    private void alertRemoveWindow() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Remove Room")
+                .setMessage("Are you sure you want to remove this room?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeWindow();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                    }
+                })
+                .show();
+    }
+
+    private void removeWindow() {
         String selection = CSContract.Windows._ID + "=?";
         String[] selectionArgs = {mWindowId,};
 
@@ -165,7 +184,7 @@ public class WindowDetailFragment extends Fragment implements
         getFragmentManager().popBackStack();
     }
 
-    private SimpleCursorAdapter getTrackSpinnerAdapter(){
+    private SimpleCursorAdapter getTrackSpinnerAdapter() {
         String[] projection = {CSContract.Tracks._ID, CSContract.Tracks.DESCRIPTION};
         Cursor cursor = getActivity().getContentResolver().query(
                 CSContract.Tracks.CONTENT_URI,
