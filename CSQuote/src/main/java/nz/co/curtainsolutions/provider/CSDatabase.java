@@ -18,7 +18,7 @@ import nz.co.curtainsolutions.provider.CSContract.*;
 public class CSDatabase extends SQLiteOpenHelper {
     private static final String TAG = CSDatabase.class.getSimpleName();
     private static final String DB_NAME = "curtainsolutions.db";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 11;
 
     public CSDatabase(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -49,8 +49,10 @@ public class CSDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + Tables.WINDOWS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + WindowColumns.BLIND_ID + " INTEGER,"
+                + WindowColumns.BLIND_PRICE + " DECIMAL,"
                 + WindowColumns.CURTAIN_ID + " INTEGER,"
                 + WindowColumns.CURTAIN_SEW + " DECIMAL,"
+                + WindowColumns.CURTAIN_PRICE + " DECIMAL,"
                 + WindowColumns.GROSS_HEIGHT + " DECIMAL,"
                 + WindowColumns.GROSS_WIDTH + " DECIMAL,"
                 + WindowColumns.HOOK_SIZE + " TEXT,"
@@ -58,9 +60,11 @@ public class CSDatabase extends SQLiteOpenHelper {
                 + WindowColumns.INNER_WIDTH + " DECIMAL,"
                 + WindowColumns.JOB_ID + " INTEGER NOT NULL,"
                 + WindowColumns.NET_ID + " INTEGER,"
+                + WindowColumns.NET_PRICE + " DECIMAL,"
                 + WindowColumns.NOTES + " TEXT,"
                 + WindowColumns.ROOM_ID + " INTEGER NOT NULL,"
                 + WindowColumns.TRACK_ID + " INTEGER,"
+                + WindowColumns.TRACK_PRICE + " DECIMAL,"
                 + WindowColumns.TRACK_WIDTH + " DECIMAL,"
                 + WindowColumns.UNIT_PAIR + " INTEGER,"
                 + "UNIQUE (" + BaseColumns._ID + "," + WindowColumns.ROOM_ID + ") ON CONFLICT REPLACE)");
@@ -106,10 +110,13 @@ public class CSDatabase extends SQLiteOpenHelper {
         if (oldVersion != DB_VERSION) {
             Log.w(TAG, "Destroying old data during upgrade");
 
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.BLINDS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.CURTAINS);
             db.execSQL("DROP TABLE IF EXISTS " + Tables.JOBS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.NETS);
             db.execSQL("DROP TABLE IF EXISTS " + Tables.ROOMS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.WINDOWS);
             db.execSQL("DROP TABLE IF EXISTS " + Tables.TRACKS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.WINDOWS);
 
             onCreate(db);
 
@@ -119,7 +126,56 @@ public class CSDatabase extends SQLiteOpenHelper {
 
     private void seed(SQLiteDatabase db) {
         Log.d(TAG, "Seeding database " + DB_NAME);
+        seedTracks(db);
+        seedNets(db);
+    }
 
+    private void seedNets(SQLiteDatabase db){
+        Log.d(TAG, "Seeding Nets");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NetColumns.DESCRIPTION, "N69");
+        contentValues.put(NetColumns.PRICE, "2.40");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "N90");
+        contentValues.put(NetColumns.PRICE, "3.70");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "N116");
+        contentValues.put(NetColumns.PRICE, "4.50");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "N136");
+        contentValues.put(NetColumns.PRICE, "5.20");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "N160");
+        contentValues.put(NetColumns.PRICE, "6.60");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "N196");
+        contentValues.put(NetColumns.PRICE, "7.60");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "N213");
+        contentValues.put(NetColumns.PRICE, "8.00");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(NetColumns.DESCRIPTION, "Cafe Net");
+        contentValues.put(NetColumns.PRICE, "7.50");
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+    }
+
+    private void seedTracks(SQLiteDatabase db){
+        Log.d(TAG, "Seeding Tracks");
         ContentValues contentValues = new ContentValues();
         contentValues.put(TrackColumns.MIN_WIDTH, 0);
         contentValues.put(TrackColumns.MAX_WIDTH, 1200);

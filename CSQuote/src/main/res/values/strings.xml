@@ -14,4 +14,17 @@
         <item>Inventory</item>
     </string-array>
 
+    <string-array name="unit_pair">
+        <item></item>
+        <item>Unit</item>
+        <item>Pair</item>
+    </string-array>
+
+    <string-array name="hook_sizes">
+        <item></item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+
 </resources>

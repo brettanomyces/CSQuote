@@ -3,36 +3,20 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:paddingLeft="8dp"
-              android:paddingRight="8dp">
+              android:padding="5dp">
 
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Job"
-            android:id="@+id/job_text"/>
-
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Room"
-            android:id="@+id/room_text"/>
+    <ListView android:id="@id/android:list"
+              android:layout_width="match_parent"
+              android:layout_height="0dip"
+              android:layout_weight="1"
+              android:drawSelectorOnTop="false"
+              android:divider="@android:color/holo_blue_dark"
+              android:dividerHeight="1dp"/>
 
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Add Window"
             android:id="@+id/add_window_btn"/>
-
-    <ListView android:id="@id/android:list"
-              android:layout_width="match_parent"
-              android:layout_height="0dip"
-              android:background="#ffffff"
-              android:layout_weight="1"
-              android:drawSelectorOnTop="false"
-              android:divider="#000000"
-              android:dividerHeight="1dp"/>
 
 </LinearLayout>

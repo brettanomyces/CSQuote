@@ -250,10 +250,6 @@ public class CSProvider extends ContentProvider {
                 final String windowId = Windows.getWindowId(uri);
                 return builder
                         .table(Tables.WINDOWS)
-                        .mapToTable(Windows._ID, Tables.WINDOWS)
-                        .mapToTable(Windows.ROOM_ID, Tables.WINDOWS)
-                        .mapToTable(Windows.GROSS_HEIGHT, Tables.WINDOWS)
-                        .mapToTable(Windows.GROSS_WIDTH, Tables.WINDOWS)
                         .where(Windows._ID + "=?", windowId);
             }
 
@@ -270,5 +266,8 @@ public class CSProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
         }
+    }
+
+    private interface Subquery {
     }
 }

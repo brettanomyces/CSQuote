@@ -13,9 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -38,16 +40,21 @@ public class WindowDetailFragment extends Fragment implements
     private static final Map<String, Integer> viewMap;
     static {
         Map<String, Integer> map = new HashMap<String, Integer>();
-        map.put(CSContract.Windows.JOB_ID, R.id.job_text);
-        map.put(CSContract.Windows.ROOM_ID, R.id.room_text);
-        map.put(CSContract.Windows._ID, R.id.window_text);
+        map.put(CSContract.Windows.BLIND_PRICE, R.id.blind_price_text);
+        map.put(CSContract.Windows.CURTAIN_SEW, R.id.curtain_sew_text);
+        map.put(CSContract.Windows.CURTAIN_PRICE, R.id.curtian_price_text);
         map.put(CSContract.Windows.GROSS_HEIGHT, R.id.gross_height_text);
-        map.put(CSContract.Windows.INNER_HEIGHT, R.id.inner_height_text);
         map.put(CSContract.Windows.GROSS_WIDTH, R.id.gross_width_text);
+        map.put(CSContract.Windows.INNER_HEIGHT, R.id.inner_height_text);
         map.put(CSContract.Windows.INNER_WIDTH, R.id.inner_width_text);
+        map.put(CSContract.Windows.JOB_ID, R.id.job_text);
+        map.put(CSContract.Windows.NET_PRICE, R.id.net_price_text);
+        map.put(CSContract.Windows.NOTES, R.id.notes_text);
+        map.put(CSContract.Windows.ROOM_ID, R.id.room_text);
+        map.put(CSContract.Windows.TRACK_PRICE, R.id.track_price_text);
         map.put(CSContract.Windows.TRACK_WIDTH, R.id.track_width_text);
+        map.put(CSContract.Windows._ID, R.id.window_text);
         viewMap = Collections.unmodifiableMap(map);
-
     }
 
     private String mJobId;
@@ -77,6 +84,8 @@ public class WindowDetailFragment extends Fragment implements
         mLayout.findViewById(R.id.remove_window_btn).setOnClickListener(this);
         mLayout.findViewById(R.id.done_btn).setOnClickListener(this);
         ((Spinner) mLayout.findViewById(R.id.track_size_spinner)).setAdapter(getTrackSpinnerAdapter());
+        ((Spinner) mLayout.findViewById(R.id.unit_pair_spinner)).setAdapter(getUnitPairSpinnerAdapter());
+        ((Spinner) mLayout.findViewById(R.id.hook_size_spinner)).setAdapter(getHookSizeSpinnerAdapter());
 
         if (mJobId != null) {
             getLoaderManager().initLoader(WINDOW_DETAIL_LOADER, null, this);
@@ -89,7 +98,8 @@ public class WindowDetailFragment extends Fragment implements
     public void onPause() {
         super.onPause();
 
-        // Commit current state to database
+        // Get the current values from every field.
+        // TODO check for changes
         ContentValues contentValues = new ContentValues();
         for (String column : viewMap.keySet()) {
             String value = ((TextView) mLayout.findViewById(viewMap.get(column))).getText().toString();
@@ -126,15 +136,26 @@ public class WindowDetailFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
-                CSContract.Windows._ID,
-                CSContract.Windows.JOB_ID,
-                CSContract.Windows.ROOM_ID,
+                CSContract.Windows.BLIND_ID,
+                CSContract.Windows.BLIND_PRICE,
+                CSContract.Windows.CURTAIN_ID,
+                CSContract.Windows.CURTAIN_PRICE,
+                CSContract.Windows.CURTAIN_SEW,
                 CSContract.Windows.GROSS_HEIGHT,
-                CSContract.Windows.INNER_HEIGHT,
                 CSContract.Windows.GROSS_WIDTH,
+                CSContract.Windows.HOOK_SIZE,
+                CSContract.Windows.INNER_HEIGHT,
                 CSContract.Windows.INNER_WIDTH,
-                CSContract.Windows.TRACK_WIDTH,
+                CSContract.Windows.JOB_ID,
+                CSContract.Windows.NET_ID,
+                CSContract.Windows.NET_PRICE,
+                CSContract.Windows.NOTES,
+                CSContract.Windows.ROOM_ID,
                 CSContract.Windows.TRACK_ID,
+                CSContract.Windows.TRACK_PRICE,
+                CSContract.Windows.TRACK_WIDTH,
+                CSContract.Windows.UNIT_PAIR,
+                CSContract.Windows._ID,
         };
 
         String selection = CSContract.Windows._ID + "=?";
@@ -165,6 +186,8 @@ public class WindowDetailFragment extends Fragment implements
                     // Skip null values
                     break;
                 default: {
+                    // Default is used for Text/Edit Views
+                    Log.d(TAG, "Loading data from column '" + data.getColumnName(i) + "'");
                     TextView view = (TextView) mLayout.findViewById(viewMap.get(data.getColumnName(i)));
                     view.setText(data.getString(i));
                 }
@@ -210,7 +233,27 @@ public class WindowDetailFragment extends Fragment implements
         getFragmentManager().popBackStack();
     }
 
-    private SimpleCursorAdapter getTrackSpinnerAdapter() {
+    private SpinnerAdapter getUnitPairSpinnerAdapter(){
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(
+                        getActivity(),
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.unit_pair)
+                );
+        return adapter;
+    }
+
+    private SpinnerAdapter getHookSizeSpinnerAdapter(){
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(
+                        getActivity(),
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.hook_sizes)
+                );
+        return adapter;
+    }
+
+    private SpinnerAdapter getTrackSpinnerAdapter() {
         String[] projection = {CSContract.Tracks._ID, CSContract.Tracks.DESCRIPTION};
         Cursor cursor = getActivity().getContentResolver().query(
                 CSContract.Tracks.CONTENT_URI,

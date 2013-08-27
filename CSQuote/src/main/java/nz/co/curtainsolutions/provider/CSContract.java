@@ -37,21 +37,25 @@ public class CSContract {
     }
 
     interface WindowColumns {
-        public static final String JOB_ID = "job_id";
-        public static final String ROOM_ID = "room_id";
-        public static final String GROSS_WIDTH = "width";
-        public static final String INNER_WIDTH = "inner_width";
-        public static final String GROSS_HEIGHT = "height";
-        public static final String INNER_HEIGHT = "inner_height";
-        public static final String TRACK_WIDTH = "track_width";
-        public static final String TRACK_ID = "track_id";
-        public static final String CURTAIN_SEW = "curtain_sew";
-        public static final String UNIT_PAIR = "unit_pair";
-        public static final String HOOK_SIZE = "hook_size";
-        public static final String CURTAIN_ID = "curtain_id";
-        public static final String NET_ID = "net_id";
         public static final String BLIND_ID = "blind_id";
+        public static final String BLIND_PRICE = "blind_price";
+        public static final String CURTAIN_ID = "curtain_id";
+        public static final String CURTAIN_PRICE = "curtain_price";
+        public static final String CURTAIN_SEW = "curtain_sew";
+        public static final String GROSS_HEIGHT = "height";
+        public static final String GROSS_WIDTH = "width";
+        public static final String HOOK_SIZE = "hook_size";
+        public static final String INNER_HEIGHT = "inner_height";
+        public static final String INNER_WIDTH = "inner_width";
+        public static final String JOB_ID = "job_id";
+        public static final String NET_ID = "net_id";
+        public static final String NET_PRICE = "net_price";
         public static final String NOTES = "notes";
+        public static final String ROOM_ID = "room_id";
+        public static final String TRACK_ID = "track_id";
+        public static final String TRACK_PRICE = "track_price";
+        public static final String TRACK_WIDTH = "track_width";
+        public static final String UNIT_PAIR = "unit_pair";
     }
 
     interface TrackColumns {
