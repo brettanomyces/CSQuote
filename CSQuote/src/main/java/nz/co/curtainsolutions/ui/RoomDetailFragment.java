@@ -1,8 +1,10 @@
 package nz.co.curtainsolutions.ui;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -98,7 +100,7 @@ public class RoomDetailFragment extends Fragment implements LoaderManager.Loader
         switch (v.getId()) {
             case R.id.remove_room_btn:
                 Log.d(TAG, "removing room " + mRoomId);
-                removeRoom();
+                alertRemoveRoom();
                 break;
             case R.id.windows_btn:
                 showWindowList();
@@ -117,6 +119,25 @@ public class RoomDetailFragment extends Fragment implements LoaderManager.Loader
         fragment.setArguments(args);
 
         ((JobActivity)getActivity()).handleFragmentTransaction(fragment);
+    }
+
+    private void alertRemoveRoom() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Remove Room")
+                .setMessage("Removing this room will remove all of it's windows as well. Are you sure you want to do this?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeRoom();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                    }
+                })
+                .show();
     }
 
     private void removeRoom(){
