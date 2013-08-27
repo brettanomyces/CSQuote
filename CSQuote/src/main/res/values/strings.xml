@@ -11,6 +11,7 @@
     <string-array name="top_level_views">
         <item>Jobs</item>
         <item>New Job</item>
+        <item>Inventory</item>
     </string-array>
 
 </resources>
