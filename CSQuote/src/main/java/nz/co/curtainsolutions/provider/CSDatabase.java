@@ -10,7 +10,7 @@ import android.util.Log;
 import nz.co.curtainsolutions.provider.CSContract.JobColumns;
 import nz.co.curtainsolutions.provider.CSContract.RoomColumns;
 import nz.co.curtainsolutions.provider.CSContract.TrackColumns;
-import nz.co.curtainsolutions.provider.CSContract.WindowColumns;
+import nz.co.curtainsolutions.provider.CSContract.*;
 
 /**
  * Created by brettyukich on 20/08/13.
@@ -18,7 +18,7 @@ import nz.co.curtainsolutions.provider.CSContract.WindowColumns;
 public class CSDatabase extends SQLiteOpenHelper {
     private static final String TAG = CSDatabase.class.getSimpleName();
     private static final String DB_NAME = "curtainsolutions.db";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 6;
 
     public CSDatabase(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -26,27 +26,43 @@ public class CSDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "creating database: " + DB_NAME);
         db.execSQL("CREATE TABLE " + Tables.JOBS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + JobColumns.CUSTOMER + " TEXT,"
+                + JobColumns.PROPERTY_NUMBER + " TEXT,"
+                + JobColumns.SITE_ADDRESS + " TEXT,"
+                + JobColumns.TENANT + " TEXT,"
+                + JobColumns.HOME_PHONE + " TEXT,"
+                + JobColumns.WORK_PHONE + " TEXT,"
+                + JobColumns.MOBILE_PHONE + " TEXT,"
+                + JobColumns.NOTES + " TEXT,"
                 + "UNIQUE (" + BaseColumns._ID + ") ON CONFLICT REPLACE)");
 
         db.execSQL("CREATE TABLE " + Tables.ROOMS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + RoomColumns.DESCRIPTION + " TEXT,"
+                + RoomColumns.NOTES + " TEXT,"
                 + RoomColumns.JOB_ID + " INTEGER NOT NULL,"
                 + "UNIQUE (" + BaseColumns._ID + "," + RoomColumns.JOB_ID + ") ON CONFLICT REPLACE)");
 
         db.execSQL("CREATE TABLE " + Tables.WINDOWS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + WindowColumns.JOB_ID + " INTERGER NOT NULL,"
-                + WindowColumns.ROOM_ID + " INTEGER NOT NULL,"
+                + WindowColumns.BLIND_ID + " INTEGER,"
+                + WindowColumns.CURTAIN_ID + " INTEGER,"
+                + WindowColumns.CURTAIN_SEW + " DECIMAL,"
                 + WindowColumns.GROSS_HEIGHT + " DECIMAL,"
-                + WindowColumns.INNER_HEIGHT + " DECIMAL,"
                 + WindowColumns.GROSS_WIDTH + " DECIMAL,"
+                + WindowColumns.HOOK_SIZE + " TEXT,"
+                + WindowColumns.INNER_HEIGHT + " DECIMAL,"
                 + WindowColumns.INNER_WIDTH + " DECIMAL,"
-                + WindowColumns.TRACK_WIDTH + " DECIMAL,"
+                + WindowColumns.JOB_ID + " INTEGER NOT NULL,"
+                + WindowColumns.NET_ID + " INTEGER,"
+                + WindowColumns.NOTES + " TEXT,"
+                + WindowColumns.ROOM_ID + " INTEGER NOT NULL,"
                 + WindowColumns.TRACK_ID + " INTEGER,"
+                + WindowColumns.TRACK_WIDTH + " DECIMAL,"
+                + WindowColumns.UNIT_PAIR + " INTEGER,"
                 + "UNIQUE (" + BaseColumns._ID + "," + WindowColumns.ROOM_ID + ") ON CONFLICT REPLACE)");
 
         db.execSQL("CREATE TABLE " + Tables.TRACKS + " ("
@@ -57,6 +73,28 @@ public class CSDatabase extends SQLiteOpenHelper {
                 + TrackColumns.PRICE + " DECIMAL"
                 + ")"
         );
+
+        db.execSQL("CREATE TABLE " + Tables.BLINDS + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + BlindColumns.DESCRIPTION + " TEXT, "
+                + BlindColumns.PRICE + " DECIMAL"
+                + ")"
+        );
+
+        db.execSQL("CREATE TABLE " + Tables.NETS + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + NetColumns.DESCRIPTION + " TEXT, "
+                + NetColumns.PRICE + " DECIMAL"
+                + ")"
+        );
+
+        db.execSQL("CREATE TABLE " + Tables.CURTAINS + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + CurtainColumns.DESCRIPTION + " TEXT, "
+                + CurtainColumns.PRICE + " DECIMAL"
+                + ")"
+        );
+
 
         seed(db);
     }
@@ -80,6 +118,7 @@ public class CSDatabase extends SQLiteOpenHelper {
     }
 
     private void seed(SQLiteDatabase db) {
+        Log.d(TAG, "Seeding database " + DB_NAME);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(TrackColumns.MIN_WIDTH, 0);
@@ -122,7 +161,11 @@ public class CSDatabase extends SQLiteOpenHelper {
         String ROOMS = "rooms";
         String WINDOWS = "windows";
         String TRACKS = "tracks";
+        String NETS = "nets";
+        String CURTAINS = "curtains";
+        String BLINDS = "blinds";
 
         // Define joins here
+        // String INVENTORY = A join of tracks/nets/curtains/blinds
     }
 }

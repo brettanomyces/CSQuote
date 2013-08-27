@@ -21,11 +21,19 @@ public class CSContract {
 
     interface JobColumns {
         public static final String CUSTOMER = "customer";
+        public static final String PROPERTY_NUMBER = "property_number";
+        public static final String SITE_ADDRESS = "site_address";
+        public static final String TENANT = "tenant";
+        public static final String HOME_PHONE = "home_phone";
+        public static final String MOBILE_PHONE = "mobile_phone";
+        public static final String WORK_PHONE = "work_phone";
+        public static final String NOTES = "notes";
     }
 
     interface RoomColumns {
         public static final String JOB_ID = "job_id";
         public static final String DESCRIPTION = "description";
+        public static final String NOTES = "notes";
     }
 
     interface WindowColumns {
@@ -37,6 +45,13 @@ public class CSContract {
         public static final String INNER_HEIGHT = "inner_height";
         public static final String TRACK_WIDTH = "track_width";
         public static final String TRACK_ID = "track_id";
+        public static final String CURTAIN_SEW = "curtain_sew";
+        public static final String UNIT_PAIR = "unit_pair";
+        public static final String HOOK_SIZE = "hook_size";
+        public static final String CURTAIN_ID = "curtain_id";
+        public static final String NET_ID = "net_id";
+        public static final String BLIND_ID = "blind_id";
+        public static final String NOTES = "notes";
     }
 
     interface TrackColumns {
@@ -52,6 +67,11 @@ public class CSContract {
     }
 
     interface CurtainColumns {
+        public static final String PRICE = "price";
+        public static final String DESCRIPTION = "description";
+    }
+
+    interface BlindColumns {
         public static final String PRICE = "price";
         public static final String DESCRIPTION = "description";
     }
