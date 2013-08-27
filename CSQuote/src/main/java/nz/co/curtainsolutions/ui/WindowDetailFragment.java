@@ -36,9 +36,9 @@ public class WindowDetailFragment extends Fragment implements
 
     private static final String TAG = WindowDetailFragment.class.getSimpleName();
     private static final int WINDOW_DETAIL_LOADER = 0x05;
-
     // Map the cursor columns to the view, used for populating the fields and saving changes.
     private static final Map<String, Integer> viewMap;
+
     static {
         Map<String, Integer> map = new HashMap<String, Integer>();
         map.put(CSContract.Windows.BLIND_PRICE, R.id.blind_price_text);
@@ -47,6 +47,7 @@ public class WindowDetailFragment extends Fragment implements
         map.put(CSContract.Windows.CURTAIN_PRICE, R.id.curtian_price_text);
         map.put(CSContract.Windows.GROSS_HEIGHT, R.id.gross_height_text);
         map.put(CSContract.Windows.GROSS_WIDTH, R.id.gross_width_text);
+        map.put(CSContract.Windows.HOOK_SIZE, R.id.hook_size_spinner);
         map.put(CSContract.Windows.INNER_HEIGHT, R.id.inner_height_text);
         map.put(CSContract.Windows.INNER_WIDTH, R.id.inner_width_text);
         map.put(CSContract.Windows.JOB_ID, R.id.job_text);
@@ -57,6 +58,7 @@ public class WindowDetailFragment extends Fragment implements
         map.put(CSContract.Windows.TRACK_ID, R.id.track_size_spinner);
         map.put(CSContract.Windows.TRACK_PRICE, R.id.track_price_text);
         map.put(CSContract.Windows.TRACK_WIDTH, R.id.track_width_text);
+        map.put(CSContract.Windows.UNIT_PAIR, R.id.unit_pair_spinner);
         map.put(CSContract.Windows._ID, R.id.window_text);
         viewMap = Collections.unmodifiableMap(map);
     }
@@ -110,10 +112,10 @@ public class WindowDetailFragment extends Fragment implements
         for (String columnName : viewMap.keySet()) {
             View view = mLayout.findViewById(viewMap.get(columnName));
 
-            if (view instanceof Spinner){
+            if (view instanceof Spinner) {
                 contentValues.put(columnName, getSpinnerSelectionId((Spinner) view));
-            } else if (view instanceof TextView){
-                contentValues.put(columnName, ((TextView)view).getText().toString());
+            } else if (view instanceof TextView) {
+                contentValues.put(columnName, ((TextView) view).getText().toString());
             }
         }
 
@@ -141,7 +143,6 @@ public class WindowDetailFragment extends Fragment implements
                 break;
 
         }
-
     }
 
     @Override
@@ -189,19 +190,19 @@ public class WindowDetailFragment extends Fragment implements
         // Should only be one
         data.moveToFirst();
 
-        for (String columnName : viewMap.keySet()){
+        for (String columnName : viewMap.keySet()) {
             View view = mLayout.findViewById(viewMap.get(columnName));
             int index = data.getColumnIndex(columnName);
-            if (data.getType(index) == Cursor.FIELD_TYPE_NULL){
+            if (data.getType(index) == Cursor.FIELD_TYPE_NULL) {
                 // value has not yet been set
                 continue;
             }
             String value = data.getString(index);
-
-            if (view instanceof Spinner){
-                setSpinnerSelection((Spinner)view, value);
-            } else if (view instanceof TextView){
-                ((TextView)view).setText(value);
+            Log.d(TAG, "Loaded value '" + value + "' from column '" + columnName + "'");
+            if (view instanceof Spinner) {
+                setSpinnerSelection((Spinner) view, value);
+            } else if (view instanceof TextView) {
+                ((TextView) view).setText(value);
             }
         }
     }
@@ -243,21 +244,21 @@ public class WindowDetailFragment extends Fragment implements
         getFragmentManager().popBackStack();
     }
 
-    private SpinnerAdapter getUnitPairSpinnerAdapter(){
+    private SpinnerAdapter getUnitPairSpinnerAdapter() {
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(
                         getActivity(),
-                        android.R.layout.simple_spinner_item,
+                        R.layout.unit_pair_spinner_item,
                         getResources().getStringArray(R.array.unit_pair)
                 );
         return adapter;
     }
 
-    private SpinnerAdapter getHookSizeSpinnerAdapter(){
+    private SpinnerAdapter getHookSizeSpinnerAdapter() {
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(
                         getActivity(),
-                        android.R.layout.simple_spinner_item,
+                        R.layout.hook_spinner_item,
                         getResources().getStringArray(R.array.hook_sizes)
                 );
         return adapter;
@@ -354,23 +355,35 @@ public class WindowDetailFragment extends Fragment implements
         return simpleCursorAdapter;
     }
 
-
     private String getSpinnerSelectionId(Spinner spinner) {
-        Cursor cursor = (Cursor) spinner.getSelectedItem();
-        return cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
-    }
-
-    private void setSpinnerSelection(Spinner spinner, String id){
-        SimpleCursorAdapter adapter = ((SimpleCursorAdapter)spinner.getAdapter());
-        Cursor cursor = adapter.getCursor();
-        for (int i = 0; i < cursor.getCount(); i++){
-            cursor.moveToPosition(i);
-            if (id.contentEquals(cursor.getString(cursor.getColumnIndex(CSContract.Curtains._ID)))){
-                spinner.setSelection(i);
-                break;
-            }
+        Log.d(TAG, "Getting spinner selection");
+        if (spinner.getAdapter() instanceof SimpleCursorAdapter) {
+            Cursor cursor = (Cursor) spinner.getSelectedItem();
+            return cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
+        } else if (spinner.getAdapter() instanceof ArrayAdapter) {
+            return (String) spinner.getSelectedItem();
+        } else {
+            throw new IllegalArgumentException("Spinner cannot have adapter of type: " + spinner.getAdapter().getClass());
         }
     }
 
-
+    private void setSpinnerSelection(Spinner spinner, String value) {
+        Log.d(TAG, "Setting spinner selection");
+        if (spinner.getAdapter() instanceof SimpleCursorAdapter) {
+            SimpleCursorAdapter adapter = ((SimpleCursorAdapter) spinner.getAdapter());
+            Cursor cursor = adapter.getCursor();
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                if (value.contentEquals(cursor.getString(cursor.getColumnIndex(CSContract.Curtains._ID)))) {
+                    spinner.setSelection(i);
+                    break;
+                }
+            }
+        } else if (spinner.getAdapter() instanceof ArrayAdapter) {
+            int pos = ((ArrayAdapter<String>) spinner.getAdapter()).getPosition(value);
+            spinner.setSelection(pos);
+        } else {
+            throw new IllegalArgumentException("Spinner cannot have adapter of type: " + spinner.getAdapter().getClass());
+        }
+    }
 }
