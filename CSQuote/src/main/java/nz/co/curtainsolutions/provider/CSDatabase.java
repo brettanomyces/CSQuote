@@ -18,7 +18,7 @@ import nz.co.curtainsolutions.provider.CSContract.*;
 public class CSDatabase extends SQLiteOpenHelper {
     private static final String TAG = CSDatabase.class.getSimpleName();
     private static final String DB_NAME = "curtainsolutions.db";
-    private static final int DB_VERSION = 11;
+    private static final int DB_VERSION = 12;
 
     public CSDatabase(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -128,6 +128,55 @@ public class CSDatabase extends SQLiteOpenHelper {
         Log.d(TAG, "Seeding database " + DB_NAME);
         seedTracks(db);
         seedNets(db);
+        seedCurtains(db);
+    }
+
+    private void seedCurtains(SQLiteDatabase db) {
+        Log.d(TAG, "Seeding Curtains");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CurtainColumns.DESCRIPTION, "dw160");
+        contentValues.put(CurtainColumns.PRICE, "70.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "dw205");
+        contentValues.put(CurtainColumns.PRICE, "80.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "dw220");
+        contentValues.put(CurtainColumns.PRICE, "100.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "sw160");
+        contentValues.put(CurtainColumns.PRICE, "60.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "sw205");
+        contentValues.put(CurtainColumns.PRICE, "75.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "sw220");
+        contentValues.put(CurtainColumns.PRICE, "80.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "wh160");
+        contentValues.put(CurtainColumns.PRICE, "80.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "wh205");
+        contentValues.put(CurtainColumns.PRICE, "78.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
+        contentValues.put(CurtainColumns.DESCRIPTION, "wh220");
+        contentValues.put(CurtainColumns.PRICE, "90.00");
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
     }
 
     private void seedNets(SQLiteDatabase db){

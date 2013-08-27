@@ -31,6 +31,8 @@ public class CSProvider extends ContentProvider {
     private static final int WINDOWS_ID = 301;
     private static final int TRACKS = 400;
     private static final int TRACKS_ID = 401;
+    private static final int CURTAINS = 500;
+    private static final int CURTAIN_ID = 501;
     private CSDatabase mOpenHelper;
 
     private static UriMatcher buildUriMatcher() {
@@ -48,6 +50,9 @@ public class CSProvider extends ContentProvider {
 
         matcher.addURI(authority, "tracks", TRACKS);
         matcher.addURI(authority, "tracks/*", TRACKS_ID);
+
+        matcher.addURI(authority, "curtains", CURTAINS);
+        matcher.addURI(authority, "curtains/*", CURTAIN_ID);
 
         return matcher;
     }
@@ -92,6 +97,15 @@ public class CSProvider extends ContentProvider {
                 return Windows.CONTENT_TYPE;
             case WINDOWS_ID:
                 return Windows.CONTENT_ITEM_TYPE;
+            case TRACKS:
+                return Tracks.CONTENT_TYPE;
+            case TRACKS_ID:
+                return Tracks.CONTENT_ITEM_TYPE;
+            case CURTAINS:
+                return Curtains.CONTENT_TYPE;
+            case CURTAIN_ID:
+                return Curtains.CONTENT_ITEM_TYPE;
+
             default:
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
@@ -193,6 +207,10 @@ public class CSProvider extends ContentProvider {
                 return builder.table(Tables.TRACKS);
             }
 
+            case CURTAINS: {
+                return builder.table(Tables.CURTAINS);
+            }
+
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
@@ -254,14 +272,13 @@ public class CSProvider extends ContentProvider {
             }
 
             case TRACKS: {
-                return builder
-                        .table(Tables.TRACKS)
-                        .mapToTable(Tracks._ID, Tables.TRACKS)
-                        .mapToTable(Tracks.DESCRIPTION, Tables.TRACKS)
-                        .mapToTable(Tracks.MAX_WIDTH, Tables.TRACKS)
-                        .mapToTable(Tracks.MIN_WIDTH, Tables.TRACKS)
-                        .mapToTable(Tracks.PRICE, Tables.TRACKS);
+                return builder.table(Tables.TRACKS);
             }
+
+            case CURTAINS: {
+                return builder.table(Tables.CURTAINS);
+            }
+
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }

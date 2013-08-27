@@ -84,6 +84,7 @@ public class WindowDetailFragment extends Fragment implements
         mLayout.findViewById(R.id.remove_window_btn).setOnClickListener(this);
         mLayout.findViewById(R.id.done_btn).setOnClickListener(this);
         ((Spinner) mLayout.findViewById(R.id.track_size_spinner)).setAdapter(getTrackSpinnerAdapter());
+        ((Spinner) mLayout.findViewById(R.id.curtain_size_spinner)).setAdapter(getCurtainSpinnerAdapter());
         ((Spinner) mLayout.findViewById(R.id.unit_pair_spinner)).setAdapter(getUnitPairSpinnerAdapter());
         ((Spinner) mLayout.findViewById(R.id.hook_size_spinner)).setAdapter(getHookSizeSpinnerAdapter());
 
@@ -254,7 +255,12 @@ public class WindowDetailFragment extends Fragment implements
     }
 
     private SpinnerAdapter getTrackSpinnerAdapter() {
-        String[] projection = {CSContract.Tracks._ID, CSContract.Tracks.DESCRIPTION};
+        String[] projection = {
+                CSContract.Tracks._ID,
+                CSContract.Tracks.DESCRIPTION,
+                CSContract.Tracks.PRICE,
+        };
+
         Cursor cursor = getActivity().getContentResolver().query(
                 CSContract.Tracks.CONTENT_URI,
                 projection,
@@ -278,6 +284,37 @@ public class WindowDetailFragment extends Fragment implements
 
         return simpleCursorAdapter;
     }
+
+    private SpinnerAdapter getCurtainSpinnerAdapter() {
+        String[] projection = {
+                CSContract.Curtains._ID,
+                CSContract.Curtains.DESCRIPTION,
+                CSContract.Curtains.PRICE,
+        };
+        Cursor cursor = getActivity().getContentResolver().query(
+                CSContract.Curtains.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null
+        );
+
+        String[] from = {CSContract.Curtains.DESCRIPTION,};
+        int[] to = {R.id.curtain_description_text};
+
+        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
+                getActivity(),
+                R.layout.curtain_spinner_item,
+                cursor,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+
+        );
+
+        return simpleCursorAdapter;
+    }
+
 
 
 }
