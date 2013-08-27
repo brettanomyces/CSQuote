@@ -50,9 +50,11 @@ public class WindowDetailFragment extends Fragment implements
         map.put(CSContract.Windows.INNER_HEIGHT, R.id.inner_height_text);
         map.put(CSContract.Windows.INNER_WIDTH, R.id.inner_width_text);
         map.put(CSContract.Windows.JOB_ID, R.id.job_text);
+        map.put(CSContract.Windows.NET_ID, R.id.net_type_spinner);
         map.put(CSContract.Windows.NET_PRICE, R.id.net_price_text);
         map.put(CSContract.Windows.NOTES, R.id.notes_text);
         map.put(CSContract.Windows.ROOM_ID, R.id.room_text);
+        map.put(CSContract.Windows.TRACK_ID, R.id.track_size_spinner);
         map.put(CSContract.Windows.TRACK_PRICE, R.id.track_price_text);
         map.put(CSContract.Windows.TRACK_WIDTH, R.id.track_width_text);
         map.put(CSContract.Windows._ID, R.id.window_text);
