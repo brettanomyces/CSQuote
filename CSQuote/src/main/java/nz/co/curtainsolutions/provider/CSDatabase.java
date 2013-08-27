@@ -18,7 +18,7 @@ import nz.co.curtainsolutions.provider.CSContract.*;
 public class CSDatabase extends SQLiteOpenHelper {
     private static final String TAG = CSDatabase.class.getSimpleName();
     private static final String DB_NAME = "curtainsolutions.db";
-    private static final int DB_VERSION = 12;
+    private static final int DB_VERSION = 13;
 
     public CSDatabase(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -133,7 +133,12 @@ public class CSDatabase extends SQLiteOpenHelper {
 
     private void seedCurtains(SQLiteDatabase db) {
         Log.d(TAG, "Seeding Curtains");
+
+        // Empty Value
         ContentValues contentValues = new ContentValues();
+        db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
         contentValues.put(CurtainColumns.DESCRIPTION, "dw160");
         contentValues.put(CurtainColumns.PRICE, "70.00");
         db.insert(Tables.CURTAINS, CurtainColumns.DESCRIPTION, contentValues);
@@ -181,7 +186,12 @@ public class CSDatabase extends SQLiteOpenHelper {
 
     private void seedNets(SQLiteDatabase db){
         Log.d(TAG, "Seeding Nets");
+
+        // Empty value
         ContentValues contentValues = new ContentValues();
+        db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
         contentValues.put(NetColumns.DESCRIPTION, "N69");
         contentValues.put(NetColumns.PRICE, "2.40");
         db.insert(Tables.NETS, NetColumns.DESCRIPTION, contentValues);
@@ -225,7 +235,12 @@ public class CSDatabase extends SQLiteOpenHelper {
 
     private void seedTracks(SQLiteDatabase db){
         Log.d(TAG, "Seeding Tracks");
+
+        // Empty value
         ContentValues contentValues = new ContentValues();
+        db.insert(Tables.TRACKS, TrackColumns.DESCRIPTION, contentValues);
+
+        contentValues.clear();
         contentValues.put(TrackColumns.MIN_WIDTH, 0);
         contentValues.put(TrackColumns.MAX_WIDTH, 1200);
         contentValues.put(TrackColumns.PRICE, 30);
