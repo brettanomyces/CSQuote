@@ -46,6 +46,7 @@ public class WindowDetailFragment extends Fragment implements
         map.put(CSContract.Windows.CURTAIN_ID, R.id.curtain_size_spinner);
         map.put(CSContract.Windows.CURTAIN_SEW, R.id.curtain_sew_text);
         map.put(CSContract.Windows.CURTAIN_PRICE, R.id.curtian_price_text);
+        map.put(CSContract.Windows.DESCRIPTION, R.id.description_text);
         map.put(CSContract.Windows.GROSS_HEIGHT, R.id.gross_height_text);
         map.put(CSContract.Windows.GROSS_WIDTH, R.id.gross_width_text);
         map.put(CSContract.Windows.HOOK_SIZE, R.id.hook_size_spinner);
@@ -154,6 +155,7 @@ public class WindowDetailFragment extends Fragment implements
                 CSContract.Windows.CURTAIN_ID,
                 CSContract.Windows.CURTAIN_PRICE,
                 CSContract.Windows.CURTAIN_SEW,
+                CSContract.Windows.DESCRIPTION,
                 CSContract.Windows.GROSS_HEIGHT,
                 CSContract.Windows.GROSS_WIDTH,
                 CSContract.Windows.HOOK_SIZE,

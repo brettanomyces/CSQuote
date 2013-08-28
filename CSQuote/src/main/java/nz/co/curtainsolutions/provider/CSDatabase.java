@@ -18,7 +18,7 @@ import nz.co.curtainsolutions.provider.CSContract.*;
 public class CSDatabase extends SQLiteOpenHelper {
     private static final String TAG = CSDatabase.class.getSimpleName();
     private static final String DB_NAME = "curtainsolutions.db";
-    private static final int DB_VERSION = 13;
+    private static final int DB_VERSION = 14;
 
     public CSDatabase(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

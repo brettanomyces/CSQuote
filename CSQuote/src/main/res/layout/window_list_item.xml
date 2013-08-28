@@ -16,14 +16,15 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Window Number:"
-                />
+                android:textColor="@android:color/primary_text_light"/>
 
         <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:id="@+id/window_number_text"
-                android:gravity="right"/>
+                android:gravity="right"
+                android:textColor="@android:color/primary_text_light"/>
     </LinearLayout>
 
     <LinearLayout
@@ -35,13 +36,14 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Description:"
-                />
+                android:textColor="@android:color/primary_text_light"/>
 
         <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:id="@+id/window_description_text"
-                android:gravity="right"/>
+                android:gravity="right"
+                android:textColor="@android:color/primary_text_light"/>
     </LinearLayout>
 </LinearLayout>

@@ -36,10 +36,12 @@ public class WindowListFragment extends ListFragment
 
         String[] columns = {
                 CSContract.Windows._ID,
+                CSContract.Windows.DESCRIPTION,
         };
 
         int[] to = {
-                R.id.window_text,
+                R.id.window_number_text,
+                R.id.window_description_text,
         };
 
         mAdapter = new SimpleCursorAdapter(
@@ -127,10 +129,7 @@ public class WindowListFragment extends ListFragment
 
         String[] projection = {
                 CSContract.Windows._ID,
-                CSContract.Windows.JOB_ID,
-                CSContract.Windows.ROOM_ID,
-                CSContract.Windows.GROSS_HEIGHT,
-                CSContract.Windows.GROSS_WIDTH,
+                CSContract.Windows.DESCRIPTION,
         };
 
         String selection =
