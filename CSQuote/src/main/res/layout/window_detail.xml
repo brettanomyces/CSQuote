@@ -190,12 +190,11 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Track Size:"/>
 
-            <Spinner
+            <view
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/track_size_spinner"
-                    android:spinnerMode="dropdown"
-                    />
+                    class="nz.co.curtainsolutions.util.CursorSpinner"
+                    android:id="@+id/track_size_spinner"/>
 
         </LinearLayout>
 
@@ -281,11 +280,12 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Curtain Size:"/>
 
-            <Spinner
+            <view
+                    class="nz.co.curtainsolutions.util.CursorSpinner"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/curtain_size_spinner"
-                    android:spinnerMode="dropdown"/>
+                    android:id="@+id/curtain_size_spinner"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -317,11 +317,12 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Net Type:"/>
 
-            <Spinner
+            <view
+                    class="nz.co.curtainsolutions.util.CursorSpinner"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/net_type_spinner"
-                    android:spinnerMode="dropdown"/>
+                    android:id="@+id/net_type_spinner"/>
+
         </LinearLayout>
 
         <LinearLayout

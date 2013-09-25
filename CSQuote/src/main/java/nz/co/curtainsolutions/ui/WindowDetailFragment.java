@@ -28,12 +28,13 @@ import java.util.Map;
 
 import nz.co.curtainsolutions.R;
 import nz.co.curtainsolutions.provider.CSContract;
+import nz.co.curtainsolutions.util.CursorSpinner;
 
 /**
  * Created by brettyukich on 24/08/13.
  */
 public class WindowDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = WindowDetailFragment.class.getSimpleName();
     private static final int WINDOW_DETAIL_LOADER = 0x05;
@@ -73,7 +74,6 @@ public class WindowDetailFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle args = getArguments();
         if (args != null
                 && args.containsKey(JobActivity.ARG_JOB_ID)
@@ -204,10 +204,12 @@ public class WindowDetailFragment extends Fragment implements
             Log.d(TAG, "Loaded value '" + value + "' from column '" + columnName + "'");
             if (view instanceof Spinner) {
                 setSpinnerSelection((Spinner) view, value);
+                ((Spinner)view).setOnItemSelectedListener(this);
             } else if (view instanceof TextView) {
                 ((TextView) view).setText(value);
             }
         }
+        // Allow the SpinnerOnChangeListener to make changes
     }
 
     @Override
@@ -360,9 +362,8 @@ public class WindowDetailFragment extends Fragment implements
 
     private String getSpinnerSelectionId(Spinner spinner) {
         Log.d(TAG, "Getting spinner selection");
-        if (spinner.getAdapter() instanceof SimpleCursorAdapter) {
-            Cursor cursor = (Cursor) spinner.getSelectedItem();
-            return cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
+        if (spinner instanceof CursorSpinner) {
+            return ((CursorSpinner)spinner).getSelectionId();
         } else if (spinner.getAdapter() instanceof ArrayAdapter) {
             return (String) spinner.getSelectedItem();
         } else {
@@ -372,17 +373,8 @@ public class WindowDetailFragment extends Fragment implements
 
     private void setSpinnerSelection(Spinner spinner, String value) {
         Log.d(TAG, "Setting spinner selection");
-        if (spinner.getAdapter() instanceof SimpleCursorAdapter) {
-            SimpleCursorAdapter adapter = ((SimpleCursorAdapter) spinner.getAdapter());
-            Cursor cursor = adapter.getCursor();
-            for (int i = 0; i < cursor.getCount(); i++) {
-                cursor.moveToPosition(i);
-                if (value.contentEquals(cursor.getString(cursor.getColumnIndex(CSContract.Curtains._ID)))) {
-                    spinner.setSelection(i);
-                    spinner.setOnItemSelectedListener(new SpinnerChangeListener(i));
-                    break;
-                }
-            }
+        if (spinner instanceof CursorSpinner){
+            ((CursorSpinner)spinner).setSelectionId(value);
         } else if (spinner.getAdapter() instanceof ArrayAdapter) {
             int pos = ((ArrayAdapter<String>) spinner.getAdapter()).getPosition(value);
             spinner.setSelection(pos);
@@ -391,42 +383,35 @@ public class WindowDetailFragment extends Fragment implements
         }
     }
 
-    private class SpinnerChangeListener implements AdapterView.OnItemSelectedListener {
-        private int mOldPosition;
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        public SpinnerChangeListener(int position) {
-            mOldPosition = position;
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if(position != mOldPosition){
-                if (((Spinner) parent).getAdapter() instanceof SimpleCursorAdapter) {
-                    Cursor cursor = (Cursor) ((Spinner) parent).getSelectedItem();
-                    switch (parent.getId()) {
-                        case R.id.curtain_size_spinner: {
-                            String price = cursor.getString(cursor.getColumnIndex(CSContract.Curtains.PRICE));
-                            ((TextView) mLayout.findViewById(R.id.curtian_price_text)).setText(price);
-                            break;
-                        }
-                        case R.id.net_type_spinner: {
-                            String price = cursor.getString(cursor.getColumnIndex(CSContract.Nets.PRICE));
-                            ((TextView) mLayout.findViewById(R.id.net_price_text)).setText(price);
-                            break;
-                        }
-                        case R.id.track_size_spinner: {
-                            String price = cursor.getString(cursor.getColumnIndex(CSContract.Tracks.PRICE));
-                            ((TextView) mLayout.findViewById(R.id.track_price_text)).setText(price);
-                            break;
-                        }
+        if (parent instanceof CursorSpinner) {
+            if (((CursorSpinner)parent).hasBeenSet()){
+                Cursor cursor = (Cursor) ((Spinner) parent).getSelectedItem();
+                switch (parent.getId()) {
+                    case R.id.curtain_size_spinner: {
+                        String price = cursor.getString(cursor.getColumnIndex(CSContract.Curtains.PRICE));
+                        ((TextView) mLayout.findViewById(R.id.curtian_price_text)).setText(price);
+                        break;
+                    }
+                    case R.id.net_type_spinner: {
+                        String price = cursor.getString(cursor.getColumnIndex(CSContract.Nets.PRICE));
+                        ((TextView) mLayout.findViewById(R.id.net_price_text)).setText(price);
+                        break;
+                    }
+                    case R.id.track_size_spinner: {
+                        String price = cursor.getString(cursor.getColumnIndex(CSContract.Tracks.PRICE));
+                        ((TextView) mLayout.findViewById(R.id.track_price_text)).setText(price);
+                        break;
                     }
                 }
             }
         }
+    }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
-        }
     }
 }
